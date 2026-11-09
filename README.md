@@ -23,8 +23,8 @@ PSG, Pusula ve OBS'yi tek panelde birleştiren entegre öğrenci platformu ve ya
 | Üye | Rol |
 |---|---|
 | Yağız Türkmen | Arayüz (Frontend) Geliştirici |
-| Efecan Efe | Sunucu ve Entegrasyon Geliştirici |
-| Ahmet Kahraman | Yapay Zekâ ve Veri Geliştirici |
+| Efecan Efe | Sunucu, Entegrasyon ve Veri Geliştirici |
+| Ahmet Kahraman | Yapay Zekâ Geliştirici |
 
 Danışman: Dr. Öğr. Üyesi Ayşe Kale
 

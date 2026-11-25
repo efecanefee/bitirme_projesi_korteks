@@ -78,7 +78,7 @@ export function ConsentPage() {
               py: 2.5,
               borderBlock: 1,
               borderColor: 'divider',
-              bgcolor: '#FAFBFC',
+              bgcolor: 'yuzeyIkincil',
             }}
           >
             <Typography variant="h2" sx={{ mb: 2 }}>

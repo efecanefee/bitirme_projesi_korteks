@@ -3,7 +3,6 @@ import { Box, Paper, Stack, ToggleButton, ToggleButtonGroup, Typography } from '
 import { useDuyuruOkundu, useDuyurular } from '@/api/queries';
 import { SourceTag } from '@/components/SourceTag';
 import { CardSkeleton, EmptyState, ErrorState } from '@/components/states';
-import { tokens } from '@/app/theme';
 import dayjs from '@/lib/dayjs';
 import type { KaynakSistem } from '@/api/types';
 
@@ -59,9 +58,9 @@ export function AnnouncementsPage() {
                     setAcik(genis ? null : d.id);
                     if (!d.okundu) okundu.mutate(d.id);
                   }}
-                  sx={{ width: '100%', textAlign: 'left', border: 0, bgcolor: 'transparent', font: 'inherit', color: 'inherit', cursor: 'pointer', px: 3, py: 2, display: 'flex', gap: 2, '&:hover': { bgcolor: '#FAFBFC' } }}
+                  sx={{ width: '100%', textAlign: 'left', border: 0, bgcolor: 'transparent', font: 'inherit', color: 'inherit', cursor: 'pointer', px: 3, py: 2, display: 'flex', gap: 2, '&:hover': { bgcolor: 'yuzeyIkincil' } }}
                 >
-                  <Box aria-hidden sx={{ width: 8, height: 8, mt: 1, borderRadius: '50%', flexShrink: 0, bgcolor: d.okundu ? 'transparent' : tokens.lacivert }} />
+                  <Box aria-hidden sx={{ width: 8, height: 8, mt: 1, borderRadius: '50%', flexShrink: 0, bgcolor: d.okundu ? 'transparent' : 'primary.main' }} />
                   <Box sx={{ flex: 1, minWidth: 0 }}>
                     <Stack direction="row" spacing={2} sx={{ justifyContent: 'space-between', alignItems: 'baseline' }}>
                       <Typography sx={{ fontWeight: d.okundu ? 500 : 700 }}>

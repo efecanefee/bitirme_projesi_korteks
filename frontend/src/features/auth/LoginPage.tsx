@@ -20,7 +20,6 @@ import { useMutation } from '@tanstack/react-query';
 import { endpoints } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
 import { LogoMark } from '@/components/Logo';
-import { tokens } from '@/app/theme';
 import { useAuthStore } from './authStore';
 
 const sema = z.object({
@@ -125,7 +124,7 @@ export function LoginPage() {
           </Box>
 
           {MOCK && (
-            <Box sx={{ mt: 3, p: 2, borderRadius: 2, bgcolor: tokens.secili }}>
+            <Box sx={{ mt: 3, p: 2, borderRadius: 2, bgcolor: 'secili' }}>
               <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
                 Demo hesapları (sahte veri)
               </Typography>

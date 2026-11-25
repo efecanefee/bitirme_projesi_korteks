@@ -7,7 +7,7 @@ export function DateBadge({ iso }: { iso: string }) {
   return (
     <Box
       aria-label={t.format('D MMMM dddd')}
-      sx={{ width: 64, flexShrink: 0, textAlign: 'center', border: 1, borderColor: 'divider', borderRadius: 2, py: 0.75, bgcolor: '#fff' }}
+      sx={{ width: 64, flexShrink: 0, textAlign: 'center', border: 1, borderColor: 'divider', borderRadius: 2, py: 0.75, bgcolor: 'background.paper' }}
     >
       <Typography aria-hidden sx={{ fontWeight: 700, fontSize: '1.375rem', lineHeight: 1.15 }}>
         {t.format('D')}

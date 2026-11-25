@@ -16,7 +16,6 @@ import type { LucideIcon } from 'lucide-react';
 import { useAuthStore } from '@/features/auth/authStore';
 import { useDuyurular, useSenkronOzeti } from '@/api/queries';
 import { LogoMark } from '@/components/Logo';
-import { tokens } from '@/app/theme';
 import { SISTEM_ETIKETI, saat } from '@/lib/format';
 
 interface NavItem {
@@ -41,8 +40,11 @@ function NavItems({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => 
             borderRadius: 2,
             mb: 0.5,
             py: 1,
-            color: 'text.primary',
-            '&.active': { bgcolor: tokens.secili, color: 'primary.main', '& .MuiListItemText-primary': { fontWeight: 600 } },
+            color: 'menu.metin',
+            '&:hover': { bgcolor: 'menu.kart' },
+            '&.active': { bgcolor: 'primary.main', color: 'primary.contrastText', '& .MuiListItemText-primary': { fontWeight: 600 } },
+            '&.active:hover': { bgcolor: 'primary.light' },
+            '&:focus-visible': { outline: 2, outlineColor: 'menu.metin', outlineStyle: 'solid', outlineOffset: -2 },
           }}
         >
           <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
@@ -53,7 +55,7 @@ function NavItems({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => 
             <Badge
               badgeContent={badge}
               aria-label={`${badge} okunmamış`}
-              sx={{ '& .MuiBadge-badge': { position: 'static', transform: 'none', bgcolor: '#E9EBEF', color: 'text.secondary', fontWeight: 600 } }}
+              sx={{ '& .MuiBadge-badge': { position: 'static', transform: 'none', bgcolor: 'menu.rozet', color: 'menu.metin', fontWeight: 600 } }}
             />
           ) : null}
         </ListItemButton>
@@ -65,17 +67,17 @@ function NavItems({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => 
 function SyncStatus() {
   const { data } = useSenkronOzeti();
   return (
-    <Box sx={{ borderTop: 1, borderColor: 'divider', mx: 1, pt: 2, pb: 1 }} aria-label="Son senkronizasyon">
-      <Typography variant="body2" sx={{ mb: 1, px: 1 }}>
+    <Box sx={{ mx: 0.5, p: 1.5, borderRadius: 3, bgcolor: 'menu.kart' }} aria-label="Son senkronizasyon">
+      <Typography variant="body2" sx={{ mb: 1, px: 0.5, fontWeight: 600, color: 'menu.metin' }}>
         Son senkronizasyon
       </Typography>
       {(data ?? []).map((s) => (
-        <Box key={s.kaynak_sistem} sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 1, py: 0.5 }}>
-          <Box aria-hidden sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: tokens.sistem[s.kaynak_sistem] }} />
-          <Typography variant="body2" color="text.secondary" sx={{ flex: 1 }}>
+        <Box key={s.kaynak_sistem} sx={{ display: 'flex', alignItems: 'center', gap: 1, px: 0.5, py: 0.5 }}>
+          <Box aria-hidden sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: `sistem.${s.kaynak_sistem}` }} />
+          <Typography variant="body2" sx={{ flex: 1, color: 'menu.metinIkincil' }}>
             {SISTEM_ETIKETI[s.kaynak_sistem]}
           </Typography>
-          <Typography variant="body2" color={s.durum === 'hatali' ? 'error' : 'text.secondary'} sx={{ fontVariantNumeric: 'tabular-nums' }}>
+          <Typography variant="body2" sx={{ fontVariantNumeric: 'tabular-nums', color: s.durum === 'hatali' ? 'primary.light' : 'menu.metinIkincil' }}>
             {s.son_basarili ? saat(s.son_basarili) : '–'}
           </Typography>
         </Box>
@@ -109,8 +111,8 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 1, pb: 3, pt: 0.5 }}>
         <LogoMark />
         <Box>
-          <Typography sx={{ fontWeight: 700, fontSize: '1.375rem', lineHeight: 1.1 }}>Korteks</Typography>
-          <Typography variant="body2" color="text.secondary">
+          <Typography sx={{ fontFamily: (t) => t.typography.h1.fontFamily, fontWeight: 700, fontSize: '1.375rem', lineHeight: 1.1, color: '#FFFFFF' }}>Korteks</Typography>
+          <Typography variant="body2" sx={{ color: 'menu.metinIkincil' }}>
             {rol === 'yonetici' ? 'Yönetim paneli' : 'Öğrenci platformu'}
           </Typography>
         </Box>
@@ -119,7 +121,7 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
         <List disablePadding>
           {rol === 'yonetici' ? (
             <>
-              <ListSubheader disableSticky sx={{ bgcolor: 'transparent', lineHeight: 2, px: 1 }}>
+              <ListSubheader disableSticky sx={{ bgcolor: 'transparent', lineHeight: 2, px: 1, color: 'menu.baslik', fontSize: 11, fontWeight: 600, letterSpacing: '0.1em', textTransform: 'uppercase' }}>
                 Asistan yönetimi
               </ListSubheader>
               <NavItems items={yonetici} onNavigate={onNavigate} />

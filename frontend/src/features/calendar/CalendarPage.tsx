@@ -9,6 +9,7 @@ import {
   ToggleButtonGroup,
   Typography,
   useMediaQuery,
+  alpha,
   useTheme,
 } from '@mui/material';
 import { CalendarPlus, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -17,7 +18,6 @@ import { useEtkinlikler } from '@/api/queries';
 import { SourceTag } from '@/components/SourceTag';
 import { SourceLegend } from '@/features/dashboard/DashboardPage';
 import { EmptyState, ErrorState } from '@/components/states';
-import { tokens } from '@/app/theme';
 import { indirIcs } from '@/lib/ics';
 import { saat, saatTr } from '@/lib/format';
 import type { Etkinlik, EtkinlikTur } from '@/api/types';
@@ -29,7 +29,7 @@ const HAFTA_GUNLERI = ['Pzt', 'Sal', 'Çar', 'Per', 'Cum', 'Cmt', 'Paz'];
 function EtkinlikKarti({ e }: { e: Etkinlik }) {
   return (
     <Box sx={{ display: 'flex', gap: 2, px: 3, py: 2, borderTop: 1, borderColor: 'divider', alignItems: 'center' }}>
-      <Box sx={{ width: 4, alignSelf: 'stretch', borderRadius: 2, bgcolor: tokens.sistem[e.kaynak_sistem] }} aria-hidden />
+      <Box sx={{ width: 4, alignSelf: 'stretch', borderRadius: 2, bgcolor: `sistem.${e.kaynak_sistem}` }} aria-hidden />
       <Box sx={{ width: 56, flexShrink: 0 }}>
         <Typography sx={{ fontWeight: 600, fontVariantNumeric: 'tabular-nums' }}>{saatTr(saat(e.tarih))}</Typography>
         <Typography variant="caption" color="text.secondary">
@@ -156,14 +156,14 @@ export function CalendarPage() {
                         borderRight: 1,
                         borderBottom: 1,
                         borderColor: 'divider',
-                        bgcolor: sec ? tokens.secili : buAy ? '#fff' : '#FAFBFC',
+                        bgcolor: sec ? 'secili' : buAy ? 'background.paper' : 'yuzeyIkincil',
                         font: 'inherit',
                         cursor: 'pointer',
                         display: 'flex',
                         flexDirection: 'column',
                         gap: 0.5,
                         '&:nth-of-type(7n)': { borderRight: 0 },
-                        '&:hover': { bgcolor: sec ? tokens.secili : '#F7F9FC' },
+                        '&:hover': { bgcolor: sec ? 'secili' : 'yuzeyIkincil' },
                       }}
                     >
                       <Typography
@@ -176,7 +176,7 @@ export function CalendarPage() {
                           placeItems: 'center',
                           borderRadius: '50%',
                           fontWeight: bugun ? 700 : 500,
-                          color: bugun ? '#fff' : buAy ? 'text.primary' : 'text.disabled',
+                          color: bugun ? 'primary.contrastText' : buAy ? 'text.primary' : 'text.disabled',
                           bgcolor: bugun ? 'primary.main' : 'transparent',
                         }}
                       >
@@ -186,7 +186,7 @@ export function CalendarPage() {
                         <Box
                           key={e.id}
                           component="span"
-                          sx={{ fontSize: 12, lineHeight: 1.3, px: 0.75, py: 0.25, borderRadius: 1, bgcolor: `${tokens.sistem[e.kaynak_sistem]}14`, color: tokens.metin, borderLeft: `3px solid ${tokens.sistem[e.kaynak_sistem]}`, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
+                          sx={{ fontSize: 12, lineHeight: 1.3, px: 0.75, py: 0.25, borderRadius: 1, bgcolor: (t) => alpha(t.palette.sistem[e.kaynak_sistem], 0.12), color: 'text.primary', borderLeft: 3, borderColor: `sistem.${e.kaynak_sistem}`, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                         >
                           {e.ders_kodu ?? e.baslik}
                         </Box>

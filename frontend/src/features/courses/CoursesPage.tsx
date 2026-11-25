@@ -4,7 +4,6 @@ import { useDersler, useDevam } from '@/api/queries';
 import { SourceTag } from '@/components/SourceTag';
 import { ErrorState } from '@/components/states';
 import { Skeleton } from '@mui/material';
-import { tokens } from '@/app/theme';
 import { saatTr } from '@/lib/format';
 
 const GUNLER = ['', 'Pazartesi', 'Salı', 'Çarşamba', 'Perşembe', 'Cuma', 'Cumartesi', 'Pazar'];
@@ -62,7 +61,7 @@ export function CoursesPage() {
                       variant="determinate"
                       value={oran * 100}
                       aria-label={`Devamsızlık ${d.kullanilan} / ${d.sinir}`}
-                      sx={{ '& .MuiLinearProgress-bar': { bgcolor: oran >= 0.75 ? tokens.uyari : tokens.basari } }}
+                      sx={{ '& .MuiLinearProgress-bar': { bgcolor: oran >= 0.75 ? 'warning.main' : 'success.main' } }}
                     />
                   </Box>
                 )}

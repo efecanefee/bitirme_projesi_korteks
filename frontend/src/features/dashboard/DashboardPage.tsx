@@ -7,7 +7,6 @@ import { SectionCard } from '@/components/SectionCard';
 import { SourceTag } from '@/components/SourceTag';
 import { CardSkeleton, EmptyState, ErrorState } from '@/components/states';
 import { DateBadge } from '@/components/DateBadge';
-import { tokens } from '@/app/theme';
 import { ilkAd, kalanGun, saat, saatTr, selam, sayi, tamGun } from '@/lib/format';
 import type { DevamOzeti, PanelOzeti } from '@/api/types';
 
@@ -39,12 +38,12 @@ function TodayClasses({ dersler }: { dersler: PanelOzeti['bugunku_dersler'] }) {
               px: { xs: 0, sm: 2 },
               py: 2,
               borderRadius: suAn ? 2 : 0,
-              bgcolor: suAn ? tokens.secili : 'transparent',
-              borderLeft: { sm: i > 0 && !suAn ? `1px solid ${tokens.cizgi}` : 'none' },
-              borderTop: { xs: i > 0 ? `1px solid ${tokens.cizgi}` : 'none', sm: 'none' },
+              bgcolor: suAn ? 'vurguZemin' : 'transparent',
+              borderLeft: (t) => ({ sm: i > 0 && !suAn ? `1px solid ${t.palette.divider}` : 'none' }),
+              borderTop: (t) => ({ xs: i > 0 ? `1px solid ${t.palette.divider}` : 'none', sm: 'none' }),
             }}
           >
-            <Typography variant="body2" color={suAn ? 'primary' : 'text.secondary'} sx={{ fontWeight: suAn ? 600 : 400 }}>
+            <Typography variant="body2" color={suAn ? 'vurguMetin' : 'text.secondary'} sx={{ fontWeight: suAn ? 600 : 400 }}>
               {suAn ? 'Şu an · ' : ''}
               {saatTr(d.baslangic)} – {saatTr(d.bitis)}
             </Typography>
@@ -93,7 +92,7 @@ function Upcoming({ liste }: { liste: PanelOzeti['yaklasan'] }) {
 
 export function AttendanceRow({ d, dense }: { d: DevamOzeti; dense?: boolean }) {
   const oran = Math.min(d.kullanilan / d.sinir, 1);
-  const renk = oran >= 0.75 ? tokens.uyari : tokens.basari;
+  const renk = oran >= 0.75 ? 'warning.main' : 'success.main';
   const etiket = `${d.ders_adi}: ${d.sinir} devam hakkının ${d.kullanilan} tanesi kullanıldı`;
   return (
     <Box sx={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(56px, 160px) auto', alignItems: 'center', gap: 2, px: 3, py: dense ? 1.25 : 1.75, borderTop: 1, borderColor: 'divider' }}>

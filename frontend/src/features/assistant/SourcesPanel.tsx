@@ -16,7 +16,7 @@ function KaynakKarti({ k }: { k: YanitKaynagi }) {
           <Box
             component="span"
             title="Sorunun bu parçaya anlamsal benzerliği (0–1)"
-            sx={{ fontSize: 13, fontWeight: 600, color: 'success.main', bgcolor: '#E8F3EE', px: 1, py: 0.25, borderRadius: 1.5 }}
+            sx={{ fontSize: 13, fontWeight: 600, color: 'success.main', bgcolor: 'basariZemin', px: 1, py: 0.25, borderRadius: 1.5 }}
           >
             Benzerlik {sayi(k.benzerlik)}
           </Box>

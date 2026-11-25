@@ -5,7 +5,20 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="apple-touch-icon" href="/icons/apple-touch-icon.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <meta name="theme-color" content="#1D4F91" />
+    <meta name="theme-color" content="#F4FBFD" />
+    <script>
+      // Tema React yüklenmeden uygulansın; açılışta yanlış renkte parlama olmasın
+      (function () {
+        try {
+          var t = localStorage.getItem('korteks.tema');
+          var koyu = t ? t === 'dark' : window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var zemin = koyu ? '#0B1B2B' : '#F4FBFD';
+          document.documentElement.style.colorScheme = koyu ? 'dark' : 'light';
+          document.documentElement.style.backgroundColor = zemin;
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', zemin);
+        } catch (e) {}
+      })();
+    </script>
     <meta name="description" content="Korteks: PSG, Pusula ve OBS'yi tek panelde birleştiren öğrenci platformu ve yapay zekâ asistanı." />
     <title>Korteks – Öğrenci Platformu</title>
   </head>

@@ -2,8 +2,7 @@ import type { ReactElement } from 'react';
 import { render } from '@testing-library/react';
 import { createMemoryRouter, RouterProvider, type RouteObject } from 'react-router';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ThemeProvider } from '@mui/material';
-import { theme } from '@/app/theme';
+import { ColorModeProvider } from '@/app/Providers';
 import { useAuthStore } from '@/features/auth/authStore';
 import { kullanicilar } from '@/mocks/data';
 import { KVKK_SURUM } from '@/features/legal/kvkkMetni';
@@ -22,9 +21,9 @@ export function renderRoute(element: ReactElement, { path = '/', url = '/', extr
   const router = createMemoryRouter([{ path, element }, ...extra, { path: '*', element: <div>diger-sayfa</div> }], { initialEntries: [url] });
   const utils = render(
     <QueryClientProvider client={client}>
-      <ThemeProvider theme={theme}>
+      <ColorModeProvider>
         <RouterProvider router={router} />
-      </ThemeProvider>
+      </ColorModeProvider>
     </QueryClientProvider>,
   );
   return { ...utils, router, client };

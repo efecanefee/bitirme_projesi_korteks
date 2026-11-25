@@ -1,7 +1,6 @@
 import { Box, Tooltip, Typography } from '@mui/material';
 import type { KaynakSistem } from '@/api/types';
 import { SISTEM_ETIKETI, saat } from '@/lib/format';
-import { tokens } from '@/app/theme';
 
 interface Props {
   sistem: KaynakSistem;
@@ -22,7 +21,7 @@ export function SourceTag({ sistem, ek, sonSenkron, size = 'sm' }: Props) {
       <Box
         component="span"
         aria-hidden
-        sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: tokens.sistem[sistem], flexShrink: 0 }}
+        sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: `sistem.${sistem}`, flexShrink: 0 }}
       />
       <Typography component="span" variant={size === 'sm' ? 'caption' : 'body2'} color="text.secondary" sx={{ fontWeight: 500 }}>
         {SISTEM_ETIKETI[sistem]}

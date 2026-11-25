@@ -102,7 +102,7 @@ export function GradesPage() {
                         <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums' }}>
                           {ort === null ? '–' : sayi(ort, 1)}
                         </TableCell>
-                        <TableCell align="right" sx={{ pr: 3, fontWeight: 700, color: f?.durum === 'ulasilamaz' ? 'error.main' : 'primary.main' }}>
+                        <TableCell align="right" sx={{ pr: 3, fontWeight: 700, color: f?.durum === 'ulasilamaz' ? 'error.main' : 'vurguMetin' }}>
                           {finalMetni(f)}
                         </TableCell>
                       </TableRow>

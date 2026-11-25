@@ -10,7 +10,7 @@ import { RichText } from './RichText';
 export function UserBubble({ text }: { text: string }) {
   return (
     <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-      <Box sx={{ maxWidth: '78%', bgcolor: '#EBF0F7', px: 2.5, py: 1.5, borderRadius: 2.5 }}>
+      <Box sx={{ maxWidth: '78%', bgcolor: 'secondary.main', color: 'secondary.contrastText', px: 2.5, py: 1.5, borderRadius: '18px 18px 4px 18px' }}>
         <Typography sx={{ fontSize: '1rem', whiteSpace: 'pre-wrap', overflowWrap: 'anywhere' }}>{text}</Typography>
       </Box>
     </Box>
@@ -46,7 +46,7 @@ export function AssistantBubble({ mesaj, onSelect, selected }: { mesaj: SohbetMe
             border: 1,
             borderColor: selected ? 'primary.light' : 'divider',
             borderRadius: 3,
-            bgcolor: '#fff',
+            bgcolor: 'background.paper',
             px: 3,
             py: 2.25,
             cursor: 'pointer',
@@ -55,7 +55,7 @@ export function AssistantBubble({ mesaj, onSelect, selected }: { mesaj: SohbetMe
           <Typography className="sr-only">Korteks yanıtı:</Typography>
           <RichText text={mesaj.cevap} />
           {mesaj.niyet === 'bulunamadi' && mesaj.onerilen_birim && (
-            <Alert severity="info" variant="outlined" sx={{ mt: 2, bgcolor: '#F7F9FC' }}>
+            <Alert severity="info" variant="outlined" sx={{ mt: 2, bgcolor: 'yuzeyIkincil' }}>
               İlgili birim: {mesaj.onerilen_birim}
             </Alert>
           )}
@@ -71,7 +71,7 @@ export function AssistantBubble({ mesaj, onSelect, selected }: { mesaj: SohbetMe
           )}
           <Collapse in={hesap} unmountOnExit>
             {arac?.tip === 'arac' && (
-              <Box sx={{ mt: 2, p: 2, bgcolor: '#F7F8FA', borderRadius: 2 }}>
+              <Box sx={{ mt: 2, p: 2, bgcolor: 'yuzeyIkincil', borderRadius: 2 }}>
                 <Typography variant="body2" color="text.secondary">
                   {arac.arac}
                 </Typography>
@@ -121,7 +121,7 @@ export function TypingBubble() {
       <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
         <LogoMark size={44} />
       </Box>
-      <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 3, bgcolor: '#fff', px: 3, py: 2, display: 'flex', gap: 0.75, alignItems: 'center' }}>
+      <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 3, bgcolor: 'background.paper', px: 3, py: 2, display: 'flex', gap: 0.75, alignItems: 'center' }}>
         {[0, 1, 2].map((i) => (
           <Box
             key={i}

@@ -71,6 +71,21 @@ src/
 e2e/              Playwright senaryoları
 ```
 
+## Tema ve renkler
+
+Renkler seçilen logonun Atomic düzeninden gelir: vurgu Atomic Orange `#FF5C23`, yüzey Ice Cream Blue
+`#C8F3FF`, metin ve menü lacivert `#0B1B2B`. Başlıklar Space Grotesk, metin IBM Plex Sans. Tüm
+belirteçler `src/app/theme.ts` içinde, açık ve koyu tema için ayrı ayrı tanımlıdır.
+
+- **Açık/koyu tema:** üst bardaki düğmeyle değişir. İlk açılışta cihaz ayarı izlenir; kullanıcı seçim
+  yapınca tercih `localStorage` (`korteks.tema`) içinde saklanır.
+- **Kaynak sistem renkleri** (FG-04): OBS mavi, Pusula teal, PSG mor. Pusula marka turuncusuyla
+  karışmasın diye turuncudan teal'e alındı.
+- **Erişilebilirlik** (WCAG 2.1 AA): turuncu zemin üstünde metin lacivert yazılır. Kontrast oranları
+  `src/app/theme.test.ts` ile her iki temada otomatik denetlenir.
+- Bileşenlerde sabit renk kullanılmaz; `sx` içinde palet anahtarları (`'secili'`, `'yuzeyIkincil'`,
+  `` `sistem.${kaynak}` ``, `'menu.zemin'` vb.) kullanılır, böylece iki tema da otomatik çalışır.
+
 ## Sunucu ekibi için sözleşme
 
 Uç noktaların ve şemaların tamamı **`../docs/openapi.yaml`** dosyasındadır. Alan adları ER

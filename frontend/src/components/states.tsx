@@ -21,7 +21,7 @@ export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () =>
     <Alert
       severity="error"
       variant="outlined"
-      sx={{ mx: 3, mb: 2.5, bgcolor: '#fff' }}
+      sx={{ mx: 3, mb: 2.5 }}
       action={
         onRetry ? (
           <Button color="inherit" size="small" onClick={onRetry}>

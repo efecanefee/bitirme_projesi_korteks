@@ -17,6 +17,7 @@ import {
   TableRow,
   Tabs,
   Typography,
+  alpha,
 } from '@mui/material';
 import { CalendarPlus, FileText, MessageSquare, NotebookPen, Sparkles } from 'lucide-react';
 import dayjs from '@/lib/dayjs';
@@ -24,7 +25,6 @@ import { useDersDetayi, useFinalGerekli } from '@/api/queries';
 import { SectionCard } from '@/components/SectionCard';
 import { SourceTag } from '@/components/SourceTag';
 import { CardSkeleton, EmptyState, ErrorState } from '@/components/states';
-import { tokens } from '@/app/theme';
 import { iyelik, saat, saatTr, uzunTarih } from '@/lib/format';
 import { indirIcs } from '@/lib/ics';
 import type { DersDetayi, Etkinlik } from '@/api/types';
@@ -116,9 +116,9 @@ function AttendanceGrid({ d }: { d: DersDetayi }) {
                 fontSize: '0.875rem',
                 fontWeight: 500,
                 ...(durum === 'katilmadi'
-                  ? { bgcolor: '#FBE9E7', color: tokens.tehlike }
+                  ? { bgcolor: (t) => alpha(t.palette.error.main, 0.12), color: 'error.main' }
                   : durum
-                    ? { bgcolor: '#EDF2F9', color: tokens.lacivert }
+                    ? { bgcolor: 'secili', color: 'text.primary' }
                     : { border: '1px dashed', borderColor: 'divider', color: 'text.secondary' }),
               }}
             >
@@ -156,7 +156,7 @@ function FinalCalc({ kod }: { kod: string }) {
       )}
       {data && data.durum !== 'veri_yok' && (
         <>
-          <Typography sx={{ fontSize: '4rem', fontWeight: 700, lineHeight: 1, color: data.durum === 'ulasilamaz' ? 'error.main' : 'primary.main' }}>
+          <Typography sx={{ fontSize: '4rem', fontWeight: 700, lineHeight: 1, color: data.durum === 'ulasilamaz' ? 'error.main' : 'vurguMetin' }}>
             {data.durum === 'ulasilamaz' ? '>100' : data.gerekli}
           </Typography>
           <Typography color="text.secondary" sx={{ mt: 1.5 }}>
@@ -197,7 +197,7 @@ function EtkinlikSatiri({ e }: { e: Etkinlik }) {
         : `Yüklendi: ${dayjs(e.tarih).format('D MMMM')}`;
   return (
     <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, px: 3, py: 2, borderTop: 1, borderColor: 'divider' }}>
-      <Box aria-hidden sx={{ width: 44, height: 44, borderRadius: 2, bgcolor: '#F2F4F7', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
+      <Box aria-hidden sx={{ width: 44, height: 44, borderRadius: 2, bgcolor: 'yuzeyIkincil', display: 'grid', placeItems: 'center', flexShrink: 0 }}>
         <Icon size={20} strokeWidth={1.75} />
       </Box>
       <Box sx={{ minWidth: 0 }}>

@@ -5,7 +5,7 @@ export function KvkkText() {
   return (
     <Box>
       {KVKK_TASLAK && (
-        <Alert role="note" severity="warning" variant="outlined" sx={{ mb: 3, bgcolor: '#FFFBF5' }}>
+        <Alert role="note" severity="warning" variant="outlined" sx={{ mb: 3, bgcolor: 'vurguZemin' }}>
           Bu metin taslaktır ve resmî aydınlatma metni değildir. Köşeli parantezli bölümler
           üniversite tarafından tamamlanacaktır.
         </Alert>

@@ -95,6 +95,22 @@ olduğu için orada `theme="dark"` kullanılır. Favicon ve PWA ikonları `publi
 `vite.config.ts` içinde. Kılavuza göre işaret 24 px'in, yatay logo 120 px genişliğin altında
 kullanılmaz; renkleri değiştirilmez.
 
+## Korti (maskot)
+
+Asistanın yüzü Korti, `src/components/korti/KortiMascot.tsx` (durumlar: `idle`, `listen`, `think`,
+`found`, `sad`, `dance`). Hareketi azaltma ayarı açıksa animasyonlar kapanır, yalnızca ifade değişir.
+`mini` küçük boyutlarda kep, balon ve el-ayakları gizler; `decorative` yanında metin olan yerlerde
+ekran okuyucudan gizler.
+
+- **Asistan:** boş sohbette karşılar (yazarken dinler), yanıt beklenirken düşünür. Mesaj avatarının
+  ifadesi yanıtın mevcut `niyet` alanından gelir: `bulunamadi` ise üzgün, değilse mutlu. Sözleşmeye
+  yeni alan eklenmedi.
+- **Panel:** sağ sütunda Korti kartı (en yakın sınava göre öneri, hazır sorular, soru kutusu).
+  Küçültülebilir; tercih `localStorage` (`korteks.korti`) içinde saklanır.
+- **Korti düğmesi:** öğrenci sayfalarının sağ altında. Panelde yalnızca kart kapalıyken çıkar ve kartı
+  geri açar; asistan sayfasında soru kutusuna odaklar; diğer sayfalarda asistana götürür.
+- **Giriş ekranı, boş listeler, hata uyarıları, 404 ve hata sayfası** Korti'yi kullanır.
+
 ## Sunucu ekibi için sözleşme
 
 Uç noktaların ve şemaların tamamı **`../docs/openapi.yaml`** dosyasındadır. Alan adları ER

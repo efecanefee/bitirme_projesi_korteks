@@ -9,6 +9,8 @@ import { CardSkeleton, EmptyState, ErrorState } from '@/components/states';
 import { DateBadge } from '@/components/DateBadge';
 import { ilkAd, kalanGun, saat, saatTr, selam, sayi, tamGun } from '@/lib/format';
 import type { DevamOzeti, PanelOzeti } from '@/api/types';
+import { useKortiStore } from '@/components/korti/kortiStore';
+import { KortiCard } from './KortiCard';
 
 export function SourceLegend() {
   return (
@@ -113,6 +115,7 @@ export function AttendanceRow({ d, dense }: { d: DevamOzeti; dense?: boolean }) 
 export function DashboardPage() {
   const ad = useAuthStore((s) => s.kullanici?.ad_soyad ?? '');
   const { data, isPending, isError, error, refetch } = usePanel();
+  const kortiKapali = useKortiStore((s) => s.kartKapali);
 
   return (
     <Box sx={{ maxWidth: 1600, mx: 'auto' }}>
@@ -151,6 +154,7 @@ export function DashboardPage() {
         </Stack>
 
         <Stack spacing={3}>
+          {!kortiKapali && <KortiCard yaklasan={data?.yaklasan} />}
           <SectionCard title="Devam durumu" flush action={<SourceTag sistem="OBS" sonSenkron={data?.devam[0]?.son_senkron} />}>
             {isPending ? <CardSkeleton rows={4} /> : data?.devam.slice(0, 4).map((d) => <AttendanceRow key={d.ders_kaydi_id} d={d} />)}
           </SectionCard>

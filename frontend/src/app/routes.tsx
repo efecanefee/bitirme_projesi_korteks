@@ -7,6 +7,7 @@ import { LoginPage } from '@/features/auth/LoginPage';
 import { DashboardPage } from '@/features/dashboard/DashboardPage';
 import { ConsentPage } from '@/features/legal/ConsentPage';
 import { KvkkPage } from '@/features/legal/KvkkPage';
+import { KortiMascot } from '@/components/korti/KortiMascot';
 
 // Panel dışındaki ekranlar ayrı parçalar halinde yüklenir (FOG-01: ilk yükleme ≤ 2 sn)
 const CoursesPage = lazy(() => import('@/features/courses/CoursesPage').then((m) => ({ default: m.CoursesPage })));
@@ -25,8 +26,11 @@ const s = (el: ReactNode) => <Suspense fallback={<LinearProgress aria-label="Say
 
 function NotFound() {
   return (
-    <Box sx={{ textAlign: 'center', py: 10 }}>
-      <Typography variant="h1">Sayfa bulunamadı</Typography>
+    <Box sx={{ textAlign: 'center', py: { xs: 6, md: 10 }, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <KortiMascot state="sad" size={170} decorative />
+      <Typography variant="h1" sx={{ mt: 2 }}>
+        Sayfa bulunamadı
+      </Typography>
       <Typography color="text.secondary" sx={{ mt: 1, mb: 3 }}>
         Aradığın adres taşınmış ya da hiç var olmamış olabilir.
       </Typography>
@@ -39,8 +43,11 @@ function NotFound() {
 
 function RouteError() {
   return (
-    <Box sx={{ textAlign: 'center', py: 10, px: 2 }}>
-      <Typography variant="h1">Bir şeyler ters gitti</Typography>
+    <Box sx={{ textAlign: 'center', py: { xs: 6, md: 10 }, px: 2, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      <KortiMascot state="sad" size={170} decorative />
+      <Typography variant="h1" sx={{ mt: 2 }}>
+        Bir şeyler ters gitti
+      </Typography>
       <Typography color="text.secondary" sx={{ mt: 1, mb: 3 }}>
         Sayfa yüklenirken beklenmeyen bir hata oluştu. Sayfayı yenileyerek tekrar dene.
       </Typography>

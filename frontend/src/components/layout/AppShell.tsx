@@ -3,6 +3,8 @@ import { Outlet } from 'react-router';
 import { Box, Drawer, useMediaQuery, useTheme } from '@mui/material';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
+import { KortiFab } from '@/components/korti/KortiFab';
+import { useAuthStore } from '@/features/auth/authStore';
 
 export const SIDEBAR_WIDTH = 288;
 
@@ -10,6 +12,7 @@ export function AppShell() {
   const theme = useTheme();
   const masaustu = useMediaQuery(theme.breakpoints.up('md'));
   const [acik, setAcik] = useState(false);
+  const ogrenci = useAuthStore((s) => s.kullanici?.rol === 'ogrenci');
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100dvh', bgcolor: 'background.default' }}>
@@ -38,6 +41,7 @@ export function AppShell() {
           <Outlet />
         </Box>
       </Box>
+      {ogrenci && <KortiFab />}
     </Box>
   );
 }

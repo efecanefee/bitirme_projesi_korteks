@@ -11,7 +11,7 @@ PSG, Pusula ve OBS'yi tek panelde birleştiren entegre öğrenci platformu ve ya
 - Belgeye dayalı sorular (yönetmelik, akademik takvim, duyurular): RAG ile, kaynak gösterilerek yanıtlanır.
 - Kişisel sorular (final için gereken puan, kalan devamsızlık hakkı): öğrencinin kendi verisi üzerinde deterministik hesaplama araçlarıyla çözülür.
 
-## Teknolojiler (planlanan)
+## Teknolojiler
 
 - İstemci: React + TypeScript (Vite)
 - Sunucu: Python 3.12, FastAPI
@@ -28,6 +28,16 @@ PSG, Pusula ve OBS'yi tek panelde birleştiren entegre öğrenci platformu ve ya
 
 Danışman: Dr. Öğr. Üyesi Ayşe Kale
 
+## Depo yapısı
+
+| Klasör | İçerik |
+|---|---|
+| `frontend/` | React + TypeScript istemci (bkz. [frontend/README.md](frontend/README.md)) |
+| `backend/` | FastAPI sunucu (sunucu ekibi) |
+| `docs/openapi.yaml` | İstemci–sunucu API sözleşmesi |
+| `docker-compose.yml` | Tek komutla kurulum: `docker compose up --build` |
+
 ## Durum
 
-Ara sınav aşaması: gereksinim analizi ve ön tasarım tamamlandı, geliştirme 2. yarıda başlıyor.
+- Gereksinim analizi ve ön tasarım tamamlandı.
+- İstemci: tüm ekranlar sahte veri servisiyle çalışıyor (İP-4, İP-7 arayüz kısmı); API sözleşmesi `docs/openapi.yaml`.

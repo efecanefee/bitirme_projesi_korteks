@@ -235,6 +235,13 @@ export function createAppTheme(mode: PaletteMode): Theme {
           },
         },
       },
+      MuiInputLabel: {
+        // Odaktaki etiket turuncu olursa küçük metin AA'yı geçmez; kenarlık turuncu kalır
+        styleOverrides: { root: { '&.Mui-focused': { color: t.metin } } },
+      },
+      MuiFormLabel: {
+        styleOverrides: { root: { '&.Mui-focused': { color: t.metin } } },
+      },
       MuiLinearProgress: {
         styleOverrides: { root: { height: 6, borderRadius: 3, backgroundColor: alpha(t.metin, 0.08) }, bar: { borderRadius: 3 } },
       },

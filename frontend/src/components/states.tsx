@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { Alert, Box, Button, Skeleton, Stack, Typography } from '@mui/material';
 import { ApiError } from '@/api/client';
+import { KortiMascot } from '@/components/korti/KortiMascot';
 
 export function CardSkeleton({ rows = 3 }: { rows?: number }) {
   return (
@@ -21,7 +22,8 @@ export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () =>
     <Alert
       severity="error"
       variant="outlined"
-      sx={{ mx: 3, mb: 2.5 }}
+      icon={<KortiMascot state="sad" size={30} mini decorative />}
+      sx={{ mx: 3, mb: 2.5, alignItems: 'center' }}
       action={
         onRetry ? (
           <Button color="inherit" size="small" onClick={onRetry}>
@@ -35,9 +37,14 @@ export function ErrorState({ error, onRetry }: { error: unknown; onRetry?: () =>
   );
 }
 
-export function EmptyState({ title, children, action }: { title: string; children?: ReactNode; action?: ReactNode }) {
+export function EmptyState({ title, children, action, korti = true }: { title: string; children?: ReactNode; action?: ReactNode; korti?: boolean }) {
   return (
-    <Box sx={{ py: 4, px: 3, textAlign: 'center' }}>
+    <Box sx={{ py: 4, px: 3, textAlign: 'center', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+      {korti && (
+        <Box sx={{ mb: 1 }}>
+          <KortiMascot state="idle" size={84} decorative />
+        </Box>
+      )}
       <Typography variant="body1" sx={{ fontWeight: 600 }}>
         {title}
       </Typography>

@@ -20,6 +20,7 @@ import { useMutation } from '@tanstack/react-query';
 import { endpoints } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
 import { BrandLogo } from '@/components/BrandLogo';
+import { KortiMascot } from '@/components/korti/KortiMascot';
 import { useAuthStore } from './authStore';
 
 const sema = z.object({
@@ -62,6 +63,7 @@ export function LoginPage() {
     <Box sx={{ minHeight: '100dvh', display: 'grid', placeItems: 'center', bgcolor: 'background.default', p: 2 }}>
       <Box sx={{ width: '100%', maxWidth: 420 }}>
         <Stack spacing={1} sx={{ alignItems: 'center', mb: 4 }}>
+          <KortiMascot state="found" size={128} decorative />
           <BrandLogo size={56} />
           <Typography variant="body2" color="text.secondary">
             PSG, Pusula ve OBS tek yerde

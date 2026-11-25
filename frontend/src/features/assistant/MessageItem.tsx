@@ -2,7 +2,8 @@ import { useState } from 'react';
 import { Alert, Box, Button, Chip, Collapse, Stack, Typography } from '@mui/material';
 import { ThumbsDown, ThumbsUp } from 'lucide-react';
 import type { SohbetMesaji, YanitKaynagi } from '@/api/types';
-import { BrandLogo } from '@/components/BrandLogo';
+import { KortiMascot } from '@/components/korti/KortiMascot';
+import { kortiDurumu } from '@/components/korti/kortiStore';
 import { SISTEM_ETIKETI, saat, uzunTarih } from '@/lib/format';
 import { useGeriBildirim } from '@/api/queries';
 import { RichText } from './RichText';
@@ -36,8 +37,8 @@ export function AssistantBubble({ mesaj, onSelect, selected }: { mesaj: SohbetMe
 
   return (
     <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
-      <Box sx={{ mt: 0.5, display: { xs: 'none', sm: 'block' } }}>
-        <BrandLogo variant="mark" size={44} />
+      <Box sx={{ mt: 0.25, display: { xs: 'none', sm: 'block' }, flexShrink: 0 }}>
+        <KortiMascot state={kortiDurumu(mesaj)} size={52} mini decorative />
       </Box>
       <Box sx={{ flex: 1, minWidth: 0, maxWidth: 820 }}>
         <Box
@@ -52,7 +53,7 @@ export function AssistantBubble({ mesaj, onSelect, selected }: { mesaj: SohbetMe
             cursor: 'pointer',
           }}
         >
-          <Typography className="sr-only">Korteks yanıtı:</Typography>
+          <Typography className="sr-only">Korti yanıtı:</Typography>
           <RichText text={mesaj.cevap} />
           {mesaj.niyet === 'bulunamadi' && mesaj.onerilen_birim && (
             <Alert severity="info" variant="outlined" sx={{ mt: 2, bgcolor: 'yuzeyIkincil' }}>
@@ -118,8 +119,8 @@ export function AssistantBubble({ mesaj, onSelect, selected }: { mesaj: SohbetMe
 export function TypingBubble() {
   return (
     <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }} role="status">
-      <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-        <BrandLogo variant="mark" size={44} />
+      <Box sx={{ display: { xs: 'none', sm: 'block' }, flexShrink: 0 }}>
+        <KortiMascot state="think" size={64} decorative />
       </Box>
       <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 3, bgcolor: 'background.paper', px: 3, py: 2, display: 'flex', gap: 0.75, alignItems: 'center' }}>
         {[0, 1, 2].map((i) => (
@@ -138,7 +139,7 @@ export function TypingBubble() {
           />
         ))}
         <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-          Kaynaklar taranıyor
+          Korti düşünüyor, kaynaklar taranıyor
         </Typography>
       </Box>
     </Box>

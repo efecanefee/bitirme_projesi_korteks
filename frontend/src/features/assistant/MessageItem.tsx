@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Alert, Box, Button, Chip, Collapse, Stack, Typography } from '@mui/material';
 import { ThumbsDown, ThumbsUp } from 'lucide-react';
 import type { SohbetMesaji, YanitKaynagi } from '@/api/types';
-import { LogoMark } from '@/components/Logo';
+import { BrandLogo } from '@/components/BrandLogo';
 import { SISTEM_ETIKETI, saat, uzunTarih } from '@/lib/format';
 import { useGeriBildirim } from '@/api/queries';
 import { RichText } from './RichText';
@@ -37,7 +37,7 @@ export function AssistantBubble({ mesaj, onSelect, selected }: { mesaj: SohbetMe
   return (
     <Box sx={{ display: 'flex', gap: 2, alignItems: 'flex-start' }}>
       <Box sx={{ mt: 0.5, display: { xs: 'none', sm: 'block' } }}>
-        <LogoMark size={44} />
+        <BrandLogo variant="mark" size={44} />
       </Box>
       <Box sx={{ flex: 1, minWidth: 0, maxWidth: 820 }}>
         <Box
@@ -119,7 +119,7 @@ export function TypingBubble() {
   return (
     <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }} role="status">
       <Box sx={{ display: { xs: 'none', sm: 'block' } }}>
-        <LogoMark size={44} />
+        <BrandLogo variant="mark" size={44} />
       </Box>
       <Box sx={{ border: 1, borderColor: 'divider', borderRadius: 3, bgcolor: 'background.paper', px: 3, py: 2, display: 'flex', gap: 0.75, alignItems: 'center' }}>
         {[0, 1, 2].map((i) => (

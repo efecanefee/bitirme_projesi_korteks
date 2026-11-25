@@ -86,6 +86,15 @@ belirteçler `src/app/theme.ts` içinde, açık ve koyu tema için ayrı ayrı t
 - Bileşenlerde sabit renk kullanılmaz; `sx` içinde palet anahtarları (`'secili'`, `'yuzeyIkincil'`,
   `` `sistem.${kaynak}` ``, `'menu.zemin'` vb.) kullanılır, böylece iki tema da otomatik çalışır.
 
+## Logo
+
+Seçilen logo "01 · Klasik Devre" (Atomic renk düzeni). Bileşen `src/components/KorteksLogo.tsx`
+(`variant`: `mark` | `horizontal`, `theme`: `light` | `dark` | `mono` | `mono-white`).
+`BrandLogo` sayfa zeminine göre açık/koyu sürümü kendisi seçer; yan menü her iki temada lacivert
+olduğu için orada `theme="dark"` kullanılır. Favicon ve PWA ikonları `public/` altında, manifest
+`vite.config.ts` içinde. Kılavuza göre işaret 24 px'in, yatay logo 120 px genişliğin altında
+kullanılmaz; renkleri değiştirilmez.
+
 ## Sunucu ekibi için sözleşme
 
 Uç noktaların ve şemaların tamamı **`../docs/openapi.yaml`** dosyasındadır. Alan adları ER

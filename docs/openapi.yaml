@@ -1,0 +1,518 @@
+openapi: 3.0.3
+info:
+  title: Korteks API
+  version: 0.1.0
+  description: |
+    Korteks istemcisi (React) ile sunucusu (FastAPI) arasındaki sözleşme.
+    Alan adları ara rapordaki ER diyagramını (Şekil 3) izler. İstemci tarafındaki
+    karşılığı: frontend/src/api/types.ts ve frontend/src/api/endpoints.ts.
+    Bir alan değişirse üç dosya birlikte güncellenir.
+
+    Kurallar:
+    - Tüm uç noktalar /api/v1 altındadır; /auth/login dışındakiler Bearer JWT ister.
+    - Öğrenci uç noktaları yalnızca oturumdaki öğrencinin verisini döndürür (FG-10).
+    - /yonetici/* yalnızca rol=yonetici; aksi hâlde 403.
+    - Hata gövdesi FastAPI varsayılanıdır: {"detail": "Türkçe, kullanıcıya gösterilebilir mesaj"}.
+    - Tarih/saat alanları ISO 8601, UTC ofsetli.
+    - Asistan yanıtlarında LLM'e ad ve öğrenci numarası gönderilmez (FOG-07).
+servers:
+  - url: /api/v1
+security:
+  - bearer: []
+
+paths:
+  /auth/login:
+    post:
+      tags: [kimlik]
+      security: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/GirisIstegi' }
+      responses:
+        '200': { description: Başarılı, content: { application/json: { schema: { $ref: '#/components/schemas/TokenYaniti' } } } }
+        '401': { $ref: '#/components/responses/Hata' }
+  /auth/me:
+    get:
+      tags: [kimlik]
+      responses:
+        '200': { description: Oturumdaki kullanıcı, content: { application/json: { schema: { $ref: '#/components/schemas/Kullanici' } } } }
+        '401': { $ref: '#/components/responses/Hata' }
+  /auth/logout:
+    post:
+      tags: [kimlik]
+      responses:
+        '204': { description: Oturum kapatıldı }
+  /auth/riza:
+    put:
+      tags: [kimlik]
+      summary: KVKK onayını kaydet veya sohbet değerlendirme iznini güncelle
+      description: |
+        İstemci, Kullanici.riza boşsa veya metin_surumu güncel sürümden farklıysa öğrenciye onay adımını gösterir.
+        Onay tarihi sunucuda atanır. Sohbet değerlendirme izni kapatılırsa sonraki sohbetler değerlendirme verisine alınmaz.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RizaIstegi' }
+      responses:
+        '200': { description: Güncel kullanıcı, content: { application/json: { schema: { $ref: '#/components/schemas/Kullanici' } } } }
+        '422': { $ref: '#/components/responses/Hata' }
+
+  /panel:
+    get:
+      tags: [ogrenci]
+      summary: Birleşik panel için tek istekte özet (FG-04, FOG-01)
+      responses:
+        '200': { description: Panel özeti, content: { application/json: { schema: { $ref: '#/components/schemas/PanelOzeti' } } } }
+  /senkron/ozet:
+    get:
+      tags: [ogrenci]
+      summary: Sistem başına son başarılı senkronizasyon (kenar çubuğu, FOG-09)
+      responses:
+        '200': { description: Özet, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/SenkronOzeti' } } } } }
+  /dersler:
+    get:
+      tags: [ogrenci]
+      responses:
+        '200': { description: Ders kayıtları, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/DersKaydi' } } } } }
+  /dersler/{kod}:
+    get:
+      tags: [ogrenci]
+      parameters:
+        - { name: kod, in: path, required: true, schema: { type: string }, example: MAT301 }
+      responses:
+        '200': { description: Ders detayı, content: { application/json: { schema: { $ref: '#/components/schemas/DersDetayi' } } } }
+        '404': { $ref: '#/components/responses/Hata' }
+  /notlar:
+    get:
+      tags: [ogrenci]
+      responses:
+        '200': { description: Dönemin tüm değerlendirmeleri, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Degerlendirme' } } } } }
+  /devam:
+    get:
+      tags: [ogrenci]
+      responses:
+        '200': { description: Ders başına devam özeti, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/DevamOzeti' } } } } }
+  /etkinlikler:
+    get:
+      tags: [ogrenci]
+      parameters:
+        - { name: baslangic, in: query, required: true, schema: { type: string, format: date-time } }
+        - { name: bitis, in: query, required: true, schema: { type: string, format: date-time } }
+        - { name: tur, in: query, required: false, schema: { $ref: '#/components/schemas/EtkinlikTur' } }
+      responses:
+        '200': { description: Tarihe göre sıralı etkinlikler, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Etkinlik' } } } } }
+  /duyurular:
+    get:
+      tags: [ogrenci]
+      responses:
+        '200': { description: Yeniden eskiye duyurular, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Duyuru' } } } } }
+  /duyurular/{id}/okundu:
+    post:
+      tags: [ogrenci]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '204': { description: Okundu işaretlendi }
+  /araclar/final-gerekli-puan/{kod}:
+    get:
+      tags: [araclar]
+      summary: Deterministik final_gerekli_puan aracı (rapor 5.3)
+      parameters: [{ name: kod, in: path, required: true, schema: { type: string } }]
+      responses:
+        '200': { description: Hesap sonucu ve adımları, content: { application/json: { schema: { $ref: '#/components/schemas/FinalGerekliSonuc' } } } }
+
+  /asistan/sohbetler:
+    get:
+      tags: [asistan]
+      responses:
+        '200': { description: Sohbet listesi, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Sohbet' } } } } }
+  /asistan/sohbetler/{id}/mesajlar:
+    get:
+      tags: [asistan]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      responses:
+        '200': { description: Sohbetin mesajları, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/SohbetMesaji' } } } } }
+  /asistan/mesajlar:
+    post:
+      tags: [asistan]
+      summary: Soru sor (FG-07, FG-08, FG-09). sohbet_id yoksa yeni sohbet açılır.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/SoruIstegi' }
+      responses:
+        '200': { description: Yanıt, content: { application/json: { schema: { $ref: '#/components/schemas/SohbetMesaji' } } } }
+        '422': { $ref: '#/components/responses/Hata' }
+  /asistan/mesajlar/{id}/geri-bildirim:
+    post:
+      tags: [asistan]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { type: object, required: [deger], properties: { deger: { type: integer, enum: [-1, 1] } } }
+      responses:
+        '204': { description: Kaydedildi }
+
+  /yonetici/belgeler:
+    get:
+      tags: [yonetici]
+      responses:
+        '200': { description: Belgeler (tüm sürümler), content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/Belge' } } } } }
+        '403': { $ref: '#/components/responses/Hata' }
+    post:
+      tags: [yonetici]
+      summary: Belge yükle (FG-06). Aynı başlık yeni sürüm olur, eskiler pasife alınır.
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              required: [dosya, baslik, tur]
+              properties:
+                dosya: { type: string, format: binary, description: 'PDF, DOCX veya TXT; en fazla 20 MB' }
+                baslik: { type: string }
+                tur: { $ref: '#/components/schemas/BelgeTur' }
+      responses:
+        '201': { description: Oluşturuldu, indeksleme arka planda, content: { application/json: { schema: { $ref: '#/components/schemas/Belge' } } } }
+  /yonetici/belgeler/{id}:
+    patch:
+      tags: [yonetici]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, properties: { aktif_mi: { type: boolean } } }
+      responses:
+        '200': { description: Güncellendi, content: { application/json: { schema: { $ref: '#/components/schemas/Belge' } } } }
+  /yonetici/cevaplanamayan:
+    get:
+      tags: [yonetici]
+      responses:
+        '200': { description: Bulunamadı yanıtı verilen sorular (FG-12), content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/CevaplanamayanSoru' } } } } }
+  /yonetici/cevaplanamayan/{id}:
+    patch:
+      tags: [yonetici]
+      parameters: [{ name: id, in: path, required: true, schema: { type: integer } }]
+      requestBody:
+        content:
+          application/json:
+            schema: { type: object, properties: { cozuldu: { type: boolean } } }
+      responses:
+        '200': { description: Güncellendi, content: { application/json: { schema: { $ref: '#/components/schemas/CevaplanamayanSoru' } } } }
+  /yonetici/istatistik:
+    get:
+      tags: [yonetici]
+      responses:
+        '200': { description: Son 14 gün (FG-12), content: { application/json: { schema: { $ref: '#/components/schemas/YoneticiIstatistik' } } } }
+  /yonetici/senkron-loglari:
+    get:
+      tags: [yonetici]
+      responses:
+        '200': { description: SENKRON_LOG kayıtları, content: { application/json: { schema: { type: array, items: { $ref: '#/components/schemas/SenkronLog' } } } } }
+  /yonetici/senkron/{sistem}:
+    post:
+      tags: [yonetici]
+      parameters: [{ name: sistem, in: path, required: true, schema: { $ref: '#/components/schemas/KaynakSistem' } }]
+      responses:
+        '200': { description: Başlatılan çalışma, content: { application/json: { schema: { $ref: '#/components/schemas/SenkronLog' } } } }
+
+components:
+  securitySchemes:
+    bearer: { type: http, scheme: bearer, bearerFormat: JWT }
+  responses:
+    Hata:
+      description: Hata
+      content:
+        application/json:
+          schema: { type: object, required: [detail], properties: { detail: { type: string } } }
+
+  schemas:
+    KaynakSistem: { type: string, enum: [OBS, PUSULA, PSG] }
+    Rol: { type: string, enum: [ogrenci, yonetici] }
+    EtkinlikTur: { type: string, enum: [sinav, odev, duyuru, materyal, sanal_sinif] }
+    BelgeTur: { type: string, enum: [yonetmelik, akademik_takvim, duyuru, sinav_yonergesi, izlence] }
+    Niyet: { type: string, enum: [belge, kisisel, karma, bulunamadi] }
+    SenkronDurum: { type: string, enum: [basarili, hatali, calisiyor] }
+
+    GirisIstegi:
+      type: object
+      required: [e_posta, sifre]
+      properties: { e_posta: { type: string, format: email }, sifre: { type: string } }
+    Kullanici:
+      type: object
+      required: [id, ad_soyad, e_posta, rol]
+      properties:
+        id: { type: integer }
+        ogrenci_no: { type: string, nullable: true }
+        ad_soyad: { type: string }
+        e_posta: { type: string }
+        rol: { $ref: '#/components/schemas/Rol' }
+        bolum: { type: string, nullable: true }
+        sinif: { type: integer, nullable: true }
+        riza:
+          nullable: true
+          allOf: [{ $ref: '#/components/schemas/Riza' }]
+    Riza:
+      type: object
+      required: [metin_surumu, tarih, sohbet_degerlendirme]
+      properties:
+        metin_surumu: { type: string, example: taslak-2026-11 }
+        tarih: { type: string, format: date-time }
+        sohbet_degerlendirme: { type: boolean }
+    RizaIstegi:
+      type: object
+      required: [metin_surumu, sohbet_degerlendirme]
+      properties:
+        metin_surumu: { type: string }
+        sohbet_degerlendirme: { type: boolean }
+    TokenYaniti:
+      type: object
+      required: [access_token, token_type, expires_in, kullanici]
+      properties:
+        access_token: { type: string }
+        token_type: { type: string, enum: [bearer] }
+        expires_in: { type: integer, description: saniye }
+        kullanici: { $ref: '#/components/schemas/Kullanici' }
+
+    SenkronOzeti:
+      type: object
+      properties:
+        kaynak_sistem: { $ref: '#/components/schemas/KaynakSistem' }
+        son_basarili: { type: string, format: date-time, nullable: true }
+        durum: { $ref: '#/components/schemas/SenkronDurum' }
+    SenkronLog:
+      type: object
+      properties:
+        id: { type: integer }
+        kaynak_sistem: { $ref: '#/components/schemas/KaynakSistem' }
+        baslangic: { type: string, format: date-time }
+        bitis: { type: string, format: date-time, nullable: true }
+        durum: { $ref: '#/components/schemas/SenkronDurum' }
+        hata: { type: string, nullable: true }
+
+    Ders:
+      type: object
+      properties:
+        id: { type: integer }
+        kod: { type: string }
+        ad: { type: string }
+        kredi: { type: integer }
+        donem: { type: string }
+        ogretim_elemani: { type: string }
+        devam_siniri: { type: integer }
+        gecme_notu: { type: number }
+        final_alt_siniri: { type: number, nullable: true }
+    DersOturumu:
+      type: object
+      properties:
+        gun: { type: integer, minimum: 1, maximum: 7, description: 'ISO gün, 1=Pazartesi' }
+        baslangic: { type: string, example: '09:00' }
+        bitis: { type: string, example: '10:50' }
+        yer: { type: string }
+        kaynak_sistem: { $ref: '#/components/schemas/KaynakSistem' }
+    DersKaydi:
+      type: object
+      properties:
+        id: { type: integer }
+        ders: { $ref: '#/components/schemas/Ders' }
+        durum: { type: string, enum: [devam, gecti, kaldi] }
+        harf_notu: { type: string, nullable: true }
+        program: { type: array, items: { $ref: '#/components/schemas/DersOturumu' } }
+    Degerlendirme:
+      type: object
+      properties:
+        id: { type: integer }
+        ders_kaydi_id: { type: integer }
+        tur: { type: string, enum: [vize, final, odev] }
+        baslik: { type: string }
+        agirlik: { type: number, description: '0–1' }
+        puan: { type: number, nullable: true }
+        tarih: { type: string, format: date-time, nullable: true }
+        kaynak_sistem: { $ref: '#/components/schemas/KaynakSistem' }
+        son_senkron: { type: string, format: date-time }
+    Devamsizlik:
+      type: object
+      properties:
+        id: { type: integer }
+        ders_kaydi_id: { type: integer }
+        hafta: { type: integer }
+        tarih: { type: string, format: date }
+        durum: { type: string, enum: [katildi, katilmadi, izinli] }
+        kaynak_sistem: { $ref: '#/components/schemas/KaynakSistem' }
+        son_senkron: { type: string, format: date-time }
+    DevamOzeti:
+      type: object
+      properties:
+        ders_kaydi_id: { type: integer }
+        ders_kodu: { type: string }
+        ders_adi: { type: string }
+        kullanilan: { type: integer }
+        sinir: { type: integer }
+        kaynak_sistem: { $ref: '#/components/schemas/KaynakSistem' }
+        son_senkron: { type: string, format: date-time }
+    Etkinlik:
+      type: object
+      properties:
+        id: { type: integer }
+        ders_id: { type: integer, nullable: true }
+        ders_kodu: { type: string, nullable: true }
+        tur: { $ref: '#/components/schemas/EtkinlikTur' }
+        baslik: { type: string }
+        aciklama: { type: string, nullable: true }
+        tarih: { type: string, format: date-time }
+        yer: { type: string, nullable: true }
+        sure_dk: { type: integer, nullable: true }
+        kaynak_sistem: { $ref: '#/components/schemas/KaynakSistem' }
+        son_senkron: { type: string, format: date-time }
+    Duyuru:
+      type: object
+      properties:
+        id: { type: integer }
+        baslik: { type: string }
+        ozet: { type: string }
+        yayinlayan: { type: string }
+        tarih: { type: string, format: date-time }
+        ders_kodu: { type: string, nullable: true }
+        okundu: { type: boolean }
+        kaynak_sistem: { $ref: '#/components/schemas/KaynakSistem' }
+        son_senkron: { type: string, format: date-time }
+    DersDetayi:
+      type: object
+      properties:
+        kayit: { $ref: '#/components/schemas/DersKaydi' }
+        degerlendirmeler: { type: array, items: { $ref: '#/components/schemas/Degerlendirme' } }
+        devam: { type: array, items: { $ref: '#/components/schemas/Devamsizlik' } }
+        devam_ozeti: { $ref: '#/components/schemas/DevamOzeti' }
+        toplam_hafta: { type: integer }
+        pusula_etkinlikleri: { type: array, items: { $ref: '#/components/schemas/Etkinlik' } }
+        duyurular: { type: array, items: { $ref: '#/components/schemas/Duyuru' } }
+        gecme_kosulu:
+          type: object
+          nullable: true
+          properties: { aciklama: { type: string }, kaynak: { type: string } }
+    FinalGerekliSonuc:
+      type: object
+      properties:
+        ders_kodu: { type: string }
+        durum: { type: string, enum: [hesaplandi, ulasilamaz, zaten_gecti, veri_yok] }
+        gerekli: { type: integer, nullable: true }
+        adimlar: { type: array, items: { type: object, properties: { etiket: { type: string }, deger: { type: string } } } }
+        formul: { type: string, example: '(60 − 48 × 0,40) ÷ 0,60 = 68' }
+        kaynak_sistem: { $ref: '#/components/schemas/KaynakSistem' }
+        son_senkron: { type: string, format: date-time }
+    PanelOzeti:
+      type: object
+      properties:
+        bugunku_dersler:
+          type: array
+          items:
+            allOf:
+              - $ref: '#/components/schemas/DersOturumu'
+              - type: object
+                properties: { ders_kodu: { type: string }, ders_adi: { type: string } }
+        yaklasan: { type: array, items: { $ref: '#/components/schemas/Etkinlik' }, description: 'En yakın 4 sınav/ödev' }
+        devam: { type: array, items: { $ref: '#/components/schemas/DevamOzeti' } }
+        notlar:
+          type: object
+          properties:
+            genel_ortalama: { type: number, nullable: true }
+            donem: { type: string }
+            son_notlar:
+              type: array
+              items: { type: object, properties: { etiket: { type: string }, puan: { type: number }, kaynak_sistem: { $ref: '#/components/schemas/KaynakSistem' } } }
+        duyurular: { type: array, items: { $ref: '#/components/schemas/Duyuru' } }
+        okunmamis_duyuru: { type: integer }
+        akademik_donem:
+          type: object
+          properties: { ad: { type: string }, hafta: { type: integer }, aciklama: { type: string, nullable: true } }
+
+    YanitKaynagi:
+      oneOf:
+        - type: object
+          required: [tip, belge_id, belge_basligi, belge_turu, alinti, benzerlik]
+          properties:
+            tip: { type: string, enum: [belge] }
+            belge_id: { type: integer }
+            belge_basligi: { type: string }
+            belge_turu: { $ref: '#/components/schemas/BelgeTur' }
+            madde: { type: string, nullable: true }
+            sayfa: { type: string, nullable: true }
+            alinti: { type: string }
+            benzerlik: { type: number }
+        - type: object
+          required: [tip, baslik, ozet, kaynak_sistem, son_senkron]
+          properties:
+            tip: { type: string, enum: [kisisel_veri] }
+            baslik: { type: string }
+            ozet: { type: string }
+            kaynak_sistem: { $ref: '#/components/schemas/KaynakSistem' }
+            son_senkron: { type: string, format: date-time }
+        - type: object
+          required: [tip, arac, formul]
+          properties:
+            tip: { type: string, enum: [arac] }
+            arac: { type: string, example: final_gerekli_puan }
+            formul: { type: string }
+      discriminator: { propertyName: tip }
+    SoruIstegi:
+      type: object
+      required: [soru]
+      properties:
+        soru: { type: string, maxLength: 1000 }
+        sohbet_id: { type: integer, nullable: true }
+        ders_kodu: { type: string, nullable: true, description: 'Ders sayfasından gelindiyse bağlam' }
+    SohbetMesaji:
+      type: object
+      description: SOHBET_MESAJI tablosu
+      properties:
+        id: { type: integer }
+        sohbet_id: { type: integer }
+        soru: { type: string }
+        cevap: { type: string, description: 'Düz metin; **kalın** ve "- " maddeler desteklenir, HTML yorumlanmaz' }
+        niyet: { $ref: '#/components/schemas/Niyet' }
+        kaynaklar: { type: array, items: { $ref: '#/components/schemas/YanitKaynagi' } }
+        onerilen_birim: { type: string, nullable: true }
+        geri_bildirim: { type: integer, enum: [-1, 0, 1] }
+        sure_ms: { type: integer }
+        olusturma: { type: string, format: date-time }
+    Sohbet:
+      type: object
+      properties: { id: { type: integer }, baslik: { type: string }, son_mesaj: { type: string, format: date-time } }
+
+    Belge:
+      type: object
+      properties:
+        id: { type: integer }
+        ders_id: { type: integer, nullable: true }
+        baslik: { type: string }
+        tur: { $ref: '#/components/schemas/BelgeTur' }
+        surum: { type: integer }
+        aktif_mi: { type: boolean }
+        yukleme_tarihi: { type: string, format: date-time }
+        parca_sayisi: { type: integer }
+        indeks_durumu: { type: string, enum: [bekliyor, isleniyor, hazir, hatali] }
+    CevaplanamayanSoru:
+      type: object
+      properties:
+        id: { type: integer }
+        soru: { type: string }
+        tarih: { type: string, format: date-time }
+        en_yuksek_benzerlik: { type: number }
+        tekrar: { type: integer }
+        cozuldu: { type: boolean }
+    YoneticiIstatistik:
+      type: object
+      properties:
+        toplam_soru: { type: integer }
+        ortalama_sure_ms: { type: integer }
+        p95_sure_ms: { type: integer }
+        olumlu_oran: { type: number }
+        bulunamadi_oran: { type: number }
+        niyet_dagilimi: { type: array, items: { type: object, properties: { niyet: { $ref: '#/components/schemas/Niyet' }, sayi: { type: integer } } } }
+        gunluk: { type: array, items: { type: object, properties: { tarih: { type: string, format: date }, soru: { type: integer }, ortalama_sure_ms: { type: integer } } } }

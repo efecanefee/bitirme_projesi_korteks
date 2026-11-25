@@ -1,0 +1,33 @@
+# Tek komutla kurulum (FOG-10): docker compose up --build
+# backend ve veritabanı servisleri sunucu ekibi tarafından tamamlanacak.
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "8080:80"
+    depends_on:
+      - backend
+
+  backend:
+    build: ./backend
+    environment:
+      DATABASE_URL: postgresql+psycopg://korteks:korteks@db:5432/korteks
+      REDIS_URL: redis://redis:6379/0
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: korteks
+      POSTGRES_PASSWORD: korteks
+      POSTGRES_DB: korteks
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+
+volumes:
+  pgdata:

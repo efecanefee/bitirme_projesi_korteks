@@ -15,7 +15,7 @@ import {
 import type { LucideIcon } from 'lucide-react';
 import { useAuthStore } from '@/features/auth/authStore';
 import { useDuyurular, useSenkronOzeti } from '@/api/queries';
-import { LogoMark } from '@/components/Logo';
+import { KorteksLogo } from '@/components/KorteksLogo';
 import { SISTEM_ETIKETI, saat } from '@/lib/format';
 
 interface NavItem {
@@ -108,14 +108,13 @@ export function Sidebar({ onNavigate }: { onNavigate?: () => void }) {
 
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column', height: '100%', p: 2 }}>
-      <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, px: 1, pb: 3, pt: 0.5 }}>
-        <LogoMark />
-        <Box>
-          <Typography sx={{ fontFamily: (t) => t.typography.h1.fontFamily, fontWeight: 700, fontSize: '1.375rem', lineHeight: 1.1, color: '#FFFFFF' }}>Korteks</Typography>
-          <Typography variant="body2" sx={{ color: 'menu.metinIkincil' }}>
-            {rol === 'yonetici' ? 'Yönetim paneli' : 'Öğrenci platformu'}
+      <Box sx={{ px: 1, pb: 3, pt: 0.5 }}>
+        <KorteksLogo theme="dark" size={42} title="Korteks ana sayfa" />
+        {rol === 'yonetici' && (
+          <Typography variant="caption" sx={{ display: 'block', mt: 0.5, pl: 0.5, color: 'menu.metinIkincil', fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase' }}>
+            Yönetim paneli
           </Typography>
-        </Box>
+        )}
       </Box>
       <Box component="nav" aria-label="Ana menü" sx={{ flex: 1, overflowY: 'auto' }}>
         <List disablePadding>

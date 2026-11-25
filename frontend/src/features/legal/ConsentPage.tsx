@@ -13,7 +13,7 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import { endpoints } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
-import { LogoMark } from '@/components/Logo';
+import { BrandLogo } from '@/components/BrandLogo';
 import { useAuthStore } from '@/features/auth/authStore';
 import { KvkkText } from './KvkkText';
 import { KVKK_BASLIK, KVKK_SURUM } from './kvkkMetni';
@@ -53,10 +53,9 @@ export function ConsentPage() {
   return (
     <Box sx={{ minHeight: '100dvh', bgcolor: 'background.default', py: { xs: 3, md: 6 }, px: 2 }}>
       <Box sx={{ maxWidth: 820, mx: 'auto' }}>
-        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', mb: 3 }}>
-          <LogoMark size={40} />
-          <Typography sx={{ fontWeight: 700, fontSize: '1.375rem' }}>Korteks</Typography>
-        </Stack>
+        <Box sx={{ mb: 3 }}>
+          <BrandLogo size={44} />
+        </Box>
         <Paper variant="outlined" sx={{ borderRadius: 3, overflow: 'hidden' }}>
           <Box sx={{ p: { xs: 3, md: 4 }, pb: 2 }}>
             <Typography variant="h1" sx={{ fontSize: '1.5rem' }}>

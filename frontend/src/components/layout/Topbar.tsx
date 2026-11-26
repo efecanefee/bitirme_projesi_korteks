@@ -1,11 +1,10 @@
-import { useEffect, useRef, useState, type FormEvent } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router';
 import {
   Avatar,
   Box,
   Divider,
   IconButton,
-  InputBase,
   ListItemIcon,
   Menu,
   MenuItem,
@@ -14,8 +13,9 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { LogOut, Menu as MenuIcon, Moon, Search, ShieldCheck, Sun } from 'lucide-react';
+import { LogOut, Menu as MenuIcon, Moon, ShieldCheck, Sun } from 'lucide-react';
 import { useAuthStore } from '@/features/auth/authStore';
+import { GlobalArama } from '@/features/search/GlobalArama';
 import { BildirimZili } from '@/features/notifications/BildirimZili';
 import { useBildirimStore } from '@/features/notifications/bildirimStore';
 import { basHarfler } from '@/lib/format';
@@ -38,71 +38,6 @@ export function ThemeToggle() {
         {koyu ? <Sun size={20} strokeWidth={1.75} aria-hidden /> : <Moon size={20} strokeWidth={1.75} aria-hidden />}
       </IconButton>
     </Tooltip>
-  );
-}
-
-function AskBar() {
-  const navigate = useNavigate();
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [deger, setDeger] = useState('');
-
-  useEffect(() => {
-    const kisayol = (e: KeyboardEvent) => {
-      if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
-        e.preventDefault();
-        inputRef.current?.focus();
-      }
-    };
-    window.addEventListener('keydown', kisayol);
-    return () => window.removeEventListener('keydown', kisayol);
-  }, []);
-
-  const gonder = (e: FormEvent) => {
-    e.preventDefault();
-    const soru = deger.trim();
-    if (!soru) return;
-    setDeger('');
-    inputRef.current?.blur();
-    navigate(`/asistan?soru=${encodeURIComponent(soru)}`);
-  };
-
-  return (
-    <Box
-      component="form"
-      role="search"
-      onSubmit={gonder}
-      sx={{
-        flex: 1,
-        maxWidth: 880,
-        display: 'flex',
-        alignItems: 'center',
-        gap: 1.5,
-        px: 2,
-        height: 44,
-        borderRadius: 999,
-        border: 1,
-        borderColor: 'divider',
-        bgcolor: 'yuzeyIkincil',
-        transition: 'border-color .15s, background-color .15s',
-        '&:focus-within': { borderColor: 'primary.main', bgcolor: 'background.paper' },
-      }}
-    >
-      <Box component={Search} size={18} aria-hidden sx={{ color: 'text.secondary', flexShrink: 0 }} />
-      <InputBase
-        inputRef={inputRef}
-        value={deger}
-        onChange={(e) => setDeger(e.target.value)}
-        placeholder="Korteks'e sor: Finalden kaç almam gerekiyor?"
-        inputProps={{ 'aria-label': "Korteks'e soru sor", maxLength: 1000 }}
-        sx={{ flex: 1, fontSize: '0.9375rem' }}
-      />
-      <Box
-        component="kbd"
-        sx={{ display: { xs: 'none', md: 'block' }, fontFamily: 'inherit', fontSize: 12, color: 'text.secondary', border: 1, borderColor: 'divider', borderRadius: 1, px: 0.75, py: 0.25, bgcolor: 'background.paper' }}
-      >
-        Ctrl K
-      </Box>
-    </Box>
   );
 }
 
@@ -153,7 +88,7 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
           <MenuIcon size={22} />
         </IconButton>
       )}
-      {kullanici.rol === 'ogrenci' ? <AskBar /> : <Box sx={{ flex: 1 }} />}
+      {kullanici.rol === 'ogrenci' ? <GlobalArama /> : <Box sx={{ flex: 1 }} />}
       <Box sx={{ ml: 'auto !important' }}>
         <ThemeToggle />
       </Box>

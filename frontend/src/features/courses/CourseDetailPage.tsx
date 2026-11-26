@@ -1,3 +1,4 @@
+import { DevamHalkasi, SeviyeEtiketi } from '@/components/DevamHalkasi';
 import { useState } from 'react';
 import { Link as RouterLink, useNavigate, useParams } from 'react-router';
 import {
@@ -91,9 +92,13 @@ function AttendanceGrid({ d }: { d: DersDetayi }) {
     <SectionCard
       title="Devam çizelgesi"
       action={
-        <Typography variant="body2" color="text.secondary">
-          {sinir} hakkın {iyelik(kullanilan)} kullanıldı
-        </Typography>
+        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
+          <Typography variant="body2" color="text.secondary">
+            {sinir} hakkın {iyelik(kullanilan)} kullanıldı
+          </Typography>
+          <SeviyeEtiketi kullanilan={kullanilan} sinir={sinir} />
+          <DevamHalkasi kullanilan={kullanilan} sinir={sinir} ders={d.kayit.ders.ad} size={72} />
+        </Stack>
       }
     >
       <Box component="ol" aria-label="Haftalık devam" sx={{ listStyle: 'none', m: 0, p: 0, display: 'grid', gridTemplateColumns: { xs: 'repeat(7, minmax(0, 1fr))', sm: `repeat(${d.toplam_hafta}, minmax(0, 1fr))` }, gap: 1 }}>

@@ -33,11 +33,12 @@ export function OnemSimgesi({ b }: { b: Bildirim }) {
   );
 }
 
-export function OnemEtiketi({ onem }: { onem: BildirimOnem }) {
-  if (onem === 'bilgi') return null;
+export function OnemEtiketi({ b }: { b: Pick<Bildirim, 'onem' | 'tur'> }) {
+  if (b.onem === 'bilgi') return null;
+  const metin = b.tur === 'devam' ? (b.onem === 'kritik' ? 'Hak doldu' : 'Sınırda') : b.tur === 'senkron' ? 'Güncel değil' : ONEM_ETIKETI[b.onem];
   return (
-    <Typography component="span" variant="caption" sx={{ fontWeight: 700, color: onem === 'kritik' ? 'error.main' : 'warning.main', whiteSpace: 'nowrap' }}>
-      {ONEM_ETIKETI[onem]}
+    <Typography component="span" variant="caption" sx={{ fontWeight: 700, color: b.onem === 'kritik' ? 'error.main' : 'warning.main', whiteSpace: 'nowrap' }}>
+      {metin}
     </Typography>
   );
 }
@@ -120,7 +121,7 @@ export function BildirimSatiri({ b, okundu, onAc }: { b: Bildirim; okundu: boole
               {b.baslik}
               {!okundu && <span className="sr-only"> (okunmamış)</span>}
             </Typography>
-            <OnemEtiketi onem={b.onem} />
+            <OnemEtiketi b={b} />
           </Box>
           <Typography variant="body2" color="text.secondary" sx={{ mt: 0.25 }}>
             {b.aciklama}

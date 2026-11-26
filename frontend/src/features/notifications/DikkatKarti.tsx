@@ -40,7 +40,7 @@ export function DikkatKarti() {
             <Box sx={{ flex: 1, minWidth: 0 }}>
               <Box sx={{ display: 'flex', gap: 1, alignItems: 'baseline', flexWrap: 'wrap' }}>
                 <Typography sx={{ fontWeight: 600 }}>{b.baslik}</Typography>
-                <OnemEtiketi onem={b.onem} />
+                <OnemEtiketi b={b} />
               </Box>
               <Typography variant="body2" color="text.secondary">
                 {b.aciklama}

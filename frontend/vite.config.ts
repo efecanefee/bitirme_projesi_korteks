@@ -31,6 +31,8 @@ export default defineConfig(({ mode }) => {
           // Kişisel veri (KVKK) önbelleğe alınmaz; yalnızca uygulama kabuğu önbelleklenir.
           navigateFallbackDenylist: [/^\/api\//],
           globIgnores: ['**/mockServiceWorker.js'],
+          // Tarayıcı bildirimine tıklanınca ilgili sayfayı açan işleyici (FG-13)
+          importScripts: ['/bildirim-sw.js'],
         },
       }),
     ],

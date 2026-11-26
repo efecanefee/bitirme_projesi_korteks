@@ -1,5 +1,6 @@
 import { Link as RouterLink } from 'react-router';
-import { Box, LinearProgress, Link, Stack, Typography } from '@mui/material';
+import { Box, Link, Stack, Typography } from '@mui/material';
+import { DevamHalkasi, SeviyeEtiketi } from '@/components/DevamHalkasi';
 import dayjs from '@/lib/dayjs';
 import { usePanel } from '@/api/queries';
 import { useAuthStore } from '@/features/auth/authStore';
@@ -94,21 +95,16 @@ function Upcoming({ liste }: { liste: PanelOzeti['yaklasan'] }) {
 }
 
 export function AttendanceRow({ d, dense }: { d: DevamOzeti; dense?: boolean }) {
-  const oran = Math.min(d.kullanilan / d.sinir, 1);
-  const renk = oran >= 0.75 ? 'warning.main' : 'success.main';
-  const etiket = `${d.ders_adi}: ${d.sinir} devam hakkının ${d.kullanilan} tanesi kullanıldı`;
   return (
-    <Box sx={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(56px, 160px) auto', alignItems: 'center', gap: 2, px: 3, py: dense ? 1.25 : 1.75, borderTop: 1, borderColor: 'divider' }}>
-      <Typography noWrap>{d.ders_adi}</Typography>
-      <LinearProgress
-        variant="determinate"
-        value={oran * 100}
-        aria-label={etiket}
-        sx={{ '& .MuiLinearProgress-bar': { bgcolor: d.kullanilan === 0 ? 'transparent' : renk } }}
-      />
-      <Typography sx={{ fontVariantNumeric: 'tabular-nums', fontWeight: oran >= 0.75 ? 600 : 400, minWidth: 72, textAlign: 'right' }} color={oran >= 0.75 ? 'warning.main' : 'text.primary'}>
-        {d.kullanilan} / {d.sinir} hak
-      </Typography>
+    <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, px: 3, py: dense ? 1 : 1.25, borderTop: 1, borderColor: 'divider' }}>
+      <DevamHalkasi kullanilan={d.kullanilan} sinir={d.sinir} ders={d.ders_adi} size={40} />
+      <Box sx={{ flex: 1, minWidth: 0 }}>
+        <Typography noWrap>{d.ders_adi}</Typography>
+        <Typography variant="body2" color="text.secondary" sx={{ fontVariantNumeric: 'tabular-nums' }}>
+          {d.kullanilan} / {d.sinir} hak kullanıldı
+        </Typography>
+      </Box>
+      <SeviyeEtiketi kullanilan={d.kullanilan} sinir={d.sinir} />
     </Box>
   );
 }

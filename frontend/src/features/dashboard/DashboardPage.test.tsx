@@ -9,10 +9,12 @@ describe('Birleşik panel (FG-04)', () => {
   it('kartları ve her kartın kaynak sistemini gösterir', async () => {
     girisYap();
     renderRoute(<DashboardPage />);
-    expect(await screen.findByText('Algoritma Analizi ara sınavı')).toBeInTheDocument();
+    expect((await screen.findAllByText('Algoritma Analizi ara sınavı')).length).toBeGreaterThan(0);
     const devam = screen.getByRole('region', { name: 'Devam durumu' });
     expect(within(devam).getByLabelText(/Kaynak: OBS/)).toBeInTheDocument();
-    expect(within(devam).getByText('3 / 4 hak')).toBeInTheDocument();
+    expect(within(devam).getByText('3 / 4 hak kullanıldı')).toBeInTheDocument();
+    // Halka: renk tek başına bilgi taşımaz, ekran okuyucu tam cümleyi okur
+    expect(within(devam).getAllByRole('img', { name: /4 devam hakkının 3 tanesi kullanıldı, 1 hak kaldı\. Sınırda/ }).length).toBeGreaterThan(0);
     const yaklasan = screen.getByRole('region', { name: 'Yaklaşan sınav ve ödevler' });
     expect(within(yaklasan).getAllByLabelText(/Kaynak: PSG/).length).toBeGreaterThan(0);
     expect(within(yaklasan).getAllByLabelText(/Kaynak: Pusula/).length).toBeGreaterThan(0);

@@ -124,7 +124,7 @@ export function BildirimZili() {
         >
           <Badge
             badgeContent={okunmamis}
-            max={9}
+            max={99}
             color="primary"
             overlap="circular"
             sx={{

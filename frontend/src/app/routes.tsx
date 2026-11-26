@@ -20,6 +20,7 @@ const AdminOverviewPage = lazy(() => import('@/features/admin/AdminOverviewPage'
 const DocumentsPage = lazy(() => import('@/features/admin/DocumentsPage').then((m) => ({ default: m.DocumentsPage })));
 const UnansweredPage = lazy(() => import('@/features/admin/UnansweredPage').then((m) => ({ default: m.UnansweredPage })));
 const PrivacyPage = lazy(() => import('@/features/legal/PrivacyPage').then((m) => ({ default: m.PrivacyPage })));
+const AyarlarPage = lazy(() => import('@/features/settings/AyarlarPage').then((m) => ({ default: m.AyarlarPage })));
 const SyncPage = lazy(() => import('@/features/admin/SyncPage').then((m) => ({ default: m.SyncPage })));
 
 const s = (el: ReactNode) => <Suspense fallback={<LinearProgress aria-label="Sayfa yükleniyor" />}>{el}</Suspense>;
@@ -87,6 +88,7 @@ export const router = createBrowserRouter([
         ],
       },
       { path: 'gizlilik', element: s(<PrivacyPage />) },
+      { path: 'ayarlar', element: s(<AyarlarPage />) },
       { path: '*', element: <NotFound /> },
     ],
   },

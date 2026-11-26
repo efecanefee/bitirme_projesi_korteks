@@ -43,7 +43,6 @@ function DersBlogu({ b, kompakt }: { b: Blok; kompakt?: boolean }) {
       component={RouterLink}
       to={`/derslerim/${encodeURIComponent(b.kayit.ders.kod)}`}
       aria-current={aktif ? 'time' : undefined}
-      aria-label={`${GUN_UZUN[b.oturum.gun]} ${saatTr(b.oturum.baslangic)}–${saatTr(b.oturum.bitis)}: ${b.kayit.ders.ad}, ${b.oturum.yer}${aktif ? ', şu an' : ''}`}
       sx={{
         width: '100%',
         height: '100%',
@@ -67,15 +66,14 @@ function DersBlogu({ b, kompakt }: { b: Blok; kompakt?: boolean }) {
       }}
     >
       <Typography variant="caption" color="text.secondary" sx={{ fontVariantNumeric: 'tabular-nums', fontWeight: 600 }}>
+        <span className="sr-only">{GUN_UZUN[b.oturum.gun]} </span>
         {aktif ? 'Şu an · ' : ''}
         {saatTr(b.oturum.baslangic)}–{saatTr(b.oturum.bitis)}
       </Typography>
       <Typography sx={{ fontWeight: 600, fontSize: '0.875rem', lineHeight: 1.25, mt: 0.25 }}>{b.kayit.ders.ad}</Typography>
-      {!kompakt && (
-        <Typography variant="caption" color="text.secondary" sx={{ mt: 0.25 }}>
-          {b.kayit.ders.kod} · {b.oturum.yer}
-        </Typography>
-      )}
+      <Typography variant="caption" color="text.secondary" sx={{ mt: 0.25 }} className={kompakt ? 'sr-only' : undefined}>
+        {b.kayit.ders.kod} · {b.oturum.yer}
+      </Typography>
     </ButtonBase>
   );
 }
@@ -93,7 +91,7 @@ function Izgara({ liste }: { liste: Blok[] }) {
   return (
     <Paper variant="outlined" sx={{ borderRadius: 3, overflow: 'auto' }}>
       <Box
-        role="grid"
+        role="group"
         aria-label="Haftalık ders programı"
         sx={{
           display: 'grid',
@@ -106,7 +104,7 @@ function Izgara({ liste }: { liste: Blok[] }) {
         }}
       >
         {gunler.map((g, i) => (
-          <Box key={g} role="columnheader" sx={{ gridColumn: i + 2, gridRow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.75, borderBottom: 1, borderColor: 'divider' }}>
+          <Box key={g} aria-hidden sx={{ gridColumn: i + 2, gridRow: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0.75, borderBottom: 1, borderColor: 'divider' }}>
             <Typography sx={{ fontWeight: g === bugun ? 700 : 600, color: g === bugun ? 'vurguMetin' : 'text.primary' }}>{GUN_UZUN[g]}</Typography>
             {g === bugun && (
               <Typography variant="caption" sx={{ px: 0.75, borderRadius: 1, bgcolor: 'vurguZemin', color: 'vurguMetin', fontWeight: 600 }}>
@@ -125,7 +123,6 @@ function Izgara({ liste }: { liste: Blok[] }) {
         {liste.map((b) => (
           <Box
             key={`${b.kayit.id}-${b.oturum.gun}-${b.oturum.baslangic}`}
-            role="gridcell"
             sx={{ gridColumn: gunler.indexOf(b.oturum.gun) + 2, gridRow: `${satir(dk(b.oturum.baslangic))} / ${satir(dk(b.oturum.bitis))}`, zIndex: 1, py: 0.25 }}
           >
             <DersBlogu b={b} kompakt={dk(b.oturum.bitis) - dk(b.oturum.baslangic) < 60} />
@@ -146,7 +143,24 @@ function GunSekmeleri({ liste }: { liste: Blok[] }) {
     <Paper variant="outlined" sx={{ borderRadius: 3, overflow: 'hidden' }}>
       <Tabs value={gun} onChange={(_, v: number) => setGun(v)} variant="fullWidth" aria-label="Gün seç" sx={{ borderBottom: 1, borderColor: 'divider' }}>
         {gunler.map((g) => (
-          <Tab key={g} value={g} label={g === bugun ? `${GUN_KISA[g]} •` : GUN_KISA[g]} aria-label={`${GUN_UZUN[g]}${g === bugun ? ', bugün' : ''}`} sx={{ minWidth: 0, px: 0.5 }} />
+          <Tab
+            key={g}
+            value={g}
+            label={
+              <span>
+                <abbr title={GUN_UZUN[g]} style={{ textDecoration: 'none' }}>
+                  {GUN_KISA[g]}
+                </abbr>
+                {g === bugun && (
+                  <>
+                    <span aria-hidden> •</span>
+                    <span className="sr-only">, bugün</span>
+                  </>
+                )}
+              </span>
+            }
+            sx={{ minWidth: 0, px: 0.5 }}
+          />
         ))}
       </Tabs>
       <Box role="tabpanel" aria-label={GUN_UZUN[gun]} sx={{ p: 2, display: 'flex', flexDirection: 'column', gap: 1.25 }}>

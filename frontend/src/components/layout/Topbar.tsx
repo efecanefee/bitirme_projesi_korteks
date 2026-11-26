@@ -13,7 +13,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { LogOut, Menu as MenuIcon, Moon, ShieldCheck, Sun } from 'lucide-react';
+import { LogOut, Menu as MenuIcon, Moon, Settings, ShieldCheck, Sun } from 'lucide-react';
 import { useAuthStore } from '@/features/auth/authStore';
 import { GlobalArama } from '@/features/search/GlobalArama';
 import { BildirimZili } from '@/features/notifications/BildirimZili';
@@ -100,12 +100,13 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
         type="button"
         onClick={(e) => setAnchor(e.currentTarget)}
         aria-haspopup="menu"
-        aria-label="Hesap menüsü"
+        data-tur="hesap"
         sx={{ display: 'flex', alignItems: 'center', gap: 1.5, border: 0, bgcolor: 'transparent', cursor: 'pointer', p: 0.5, borderRadius: 2, font: 'inherit', color: 'inherit', textAlign: 'left' }}
       >
         <Avatar sx={{ width: 44, height: 44, bgcolor: 'secondary.main', color: 'secondary.contrastText', fontWeight: 700, fontSize: '1rem' }}>
           {basHarfler(kullanici.ad_soyad)}
         </Avatar>
+        {!masaustu && <span className="sr-only"> Hesap menüsü, {kullanici.ad_soyad}</span>}
         {masaustu && (
           <Box>
             <Typography sx={{ fontWeight: 600, lineHeight: 1.2 }}>{kullanici.ad_soyad}</Typography>
@@ -123,6 +124,17 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
           </Typography>
         </Box>
         <Divider />
+        <MenuItem
+          onClick={() => {
+            setAnchor(null);
+            navigate('/ayarlar');
+          }}
+        >
+          <ListItemIcon>
+            <Settings size={18} />
+          </ListItemIcon>
+          Ayarlar
+        </MenuItem>
         <MenuItem
           onClick={() => {
             setAnchor(null);

@@ -6,6 +6,7 @@ export function DateBadge({ iso }: { iso: string }) {
   const t = dayjs(iso);
   return (
     <Box
+      role="img"
       aria-label={t.format('D MMMM dddd')}
       sx={{ width: 64, flexShrink: 0, textAlign: 'center', border: 1, borderColor: 'divider', borderRadius: 2, py: 0.75, bgcolor: 'background.paper' }}
     >

@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { Outlet } from 'react-router';
+import { useEffect, useRef, useState } from 'react';
+import { Outlet, useLocation } from 'react-router';
+import { sayfaBasligi } from './sayfaBasligi';
 import { Box, Drawer, useMediaQuery, useTheme } from '@mui/material';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
@@ -24,6 +25,26 @@ export function AppShell() {
   const masaustu = useMediaQuery(theme.breakpoints.up('md'));
   const [acik, setAcik] = useState(false);
   const ogrenci = useAuthStore((s) => s.kullanici?.rol === 'ogrenci');
+  const { pathname } = useLocation();
+  const ilk = useRef(true);
+
+  // Sayfa değişince başlık güncellenir ve odak yeni sayfanın başlığına taşınır (WCAG 2.4.2, 2.4.3).
+  // İlk açılışta odak taşınmaz; tarayıcı varsayılanı korunur.
+  useEffect(() => {
+    document.title = sayfaBasligi(pathname);
+    if (ilk.current) {
+      ilk.current = false;
+      return;
+    }
+    const t = window.setTimeout(() => {
+      const h1 = document.querySelector<HTMLElement>('#icerik h1');
+      const hedef = h1 ?? document.getElementById('icerik');
+      if (!hedef) return;
+      if (h1 && !h1.hasAttribute('tabindex')) h1.setAttribute('tabindex', '-1');
+      hedef.focus({ preventScroll: true });
+    }, 50);
+    return () => window.clearTimeout(t);
+  }, [pathname]);
 
   return (
     <Box sx={{ display: 'flex', minHeight: '100dvh', bgcolor: 'background.default' }}>

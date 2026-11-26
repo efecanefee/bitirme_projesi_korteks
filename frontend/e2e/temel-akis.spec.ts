@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { ilkGirisPencereleriniKapat } from './yardimci';
 
 test('öğrenci giriş yapar, paneli görür ve asistana soru sorar', async ({ page }) => {
   await page.goto('/giris');
@@ -11,6 +12,8 @@ test('öğrenci giriş yapar, paneli görür ve asistana soru sorar', async ({ p
   await page.getByRole('checkbox', { name: /Aydınlatma metnini okudum/ }).check();
   await page.getByRole('button', { name: 'Onayla ve devam et' }).click();
 
+  // İlk girişte bildirim izni penceresi (ve varsa tanıtım turu)
+  await ilkGirisPencereleriniKapat(page);
   await expect(page.getByRole('heading', { level: 1 })).toContainText('Deniz');
   await expect(page.getByRole('region', { name: 'Devam durumu' })).toBeVisible();
 

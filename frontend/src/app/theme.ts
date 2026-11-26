@@ -142,8 +142,16 @@ declare module '@mui/material/Typography' {
 
 const BASLIK_FONTU = '"Space Grotesk", "IBM Plex Sans", system-ui, sans-serif';
 
-export function createAppTheme(mode: PaletteMode): Theme {
-  const t = belirtecler[mode];
+export interface TemaSecenekleri {
+  /** Yüksek kontrast: ikincil metin birincil metinle aynı, çizgiler belirgin */
+  kontrast?: boolean;
+}
+
+const KONTRAST_CIZGI: Record<PaletteMode, string> = { light: '#6B8597', dark: '#5C7F99' };
+
+export function createAppTheme(mode: PaletteMode, { kontrast = false }: TemaSecenekleri = {}): Theme {
+  const temel = belirtecler[mode];
+  const t: Belirtecler = kontrast ? { ...temel, metinIkincil: temel.metin, cizgi: KONTRAST_CIZGI[mode] } : temel;
   return createTheme({
     palette: {
       mode,
@@ -185,6 +193,13 @@ export function createAppTheme(mode: PaletteMode): Theme {
           ':focus-visible': { outline: `2px solid ${mode === 'light' ? marka.lacivert : marka.buz}`, outlineOffset: 2 },
           '@media (prefers-reduced-motion: reduce)': {
             '*, *::before, *::after': { animationDuration: '0.01ms !important', transitionDuration: '0.01ms !important' },
+          },
+          // Ayarlar'dan "Hareketi azalt" açılınca cihaz ayarından bağımsız olarak uygulanır
+          'html.hareket-azalt *, html.hareket-azalt *::before, html.hareket-azalt *::after': {
+            animationDuration: '0.01ms !important',
+            animationIterationCount: '1 !important',
+            transitionDuration: '0.01ms !important',
+            scrollBehavior: 'auto !important',
           },
         },
       },

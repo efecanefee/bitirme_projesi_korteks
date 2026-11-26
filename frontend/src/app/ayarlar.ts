@@ -13,8 +13,17 @@ export interface Esikler {
 
 export const VARSAYILAN_ESIKLER: Esikler = { sinavGun: 14, odevGun: 5, devamHak: 2 };
 
+export type YaziBoyutu = 100 | 112 | 125;
+
 interface AyarlarState {
   esikler: Esikler;
+  /** Kök yazı boyutu (%); MUI ölçüleri rem olduğu için tüm arayüz orantılı büyür */
+  yaziBoyutu: YaziBoyutu;
+  /** true: animasyonlar kapalı; false: cihazın "hareketi azalt" ayarı izlenir */
+  hareketAzalt: boolean;
+  /** İkincil metin ve çizgiler koyulaşır */
+  yuksekKontrast: boolean;
+  setGorunum: (g: Partial<Pick<AyarlarState, 'yaziBoyutu' | 'hareketAzalt' | 'yuksekKontrast'>>) => void;
   /** Tarayıcı bildirimi kullanıcı tarafından açıldı mı (izin ayrıca tarayıcıdadır) */
   tarayiciBildirimi: boolean;
   setEsikler: (e: Partial<Esikler>) => void;
@@ -30,6 +39,10 @@ export const useAyarlar = create<AyarlarState>()(
     (set) => ({
       esikler: VARSAYILAN_ESIKLER,
       tarayiciBildirimi: false,
+      yaziBoyutu: 100,
+      hareketAzalt: false,
+      yuksekKontrast: false,
+      setGorunum: (g) => set(g),
       setEsikler: (e) => set((s) => ({ esikler: { ...s.esikler, ...e } })),
       setTarayiciBildirimi: (tarayiciBildirimi) => set({ tarayiciBildirimi }),
       sifirla: () => set({ esikler: VARSAYILAN_ESIKLER }),

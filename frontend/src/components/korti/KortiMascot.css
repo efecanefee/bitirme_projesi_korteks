@@ -49,3 +49,4 @@
 /* Küçük boyut: kep, balonlar ve el-ayak düşer; yüz ve ifade kalır */
 .korti.k-mini .k-cap,.korti.k-mini .k-x,.korti.k-mini .k-limbs,.korti.k-mini .k-chin,.korti.k-mini .k-shadow{display:none}
 .korti.k-mini .k-svg{overflow:hidden}
+html.hareket-azalt .korti *{animation:none!important;transition:opacity .2s!important}

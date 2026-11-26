@@ -22,6 +22,8 @@ import { ApiError } from '@/api/client';
 import { AssistantBubble, TypingBubble, UserBubble } from './MessageItem';
 import { SourcesPanel } from './SourcesPanel';
 import dayjs from '@/lib/dayjs';
+import { KortiMascot } from '@/components/korti/KortiMascot';
+import { SORU_ODAKLA_OLAYI } from '@/components/korti/kortiStore';
 
 const GENEL_ONERILER = ['Bütünlemeye kimler girebilir?', 'Bu hafta neyim var?', 'Ders kaydı ne zaman?'];
 const dersOnerileri = (kod: string) => [`${kod} finalden kaç almam gerekiyor?`, `${kod} devam durumum nasıl?`, `${kod} sınavım hangi salonda?`];
@@ -74,6 +76,13 @@ export function AssistantPage() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params]);
+
+  // Sağ alttaki Korti düğmesi bu sayfada soru kutusuna odaklar
+  useEffect(() => {
+    const odakla = () => girdiRef.current?.focus();
+    window.addEventListener(SORU_ODAKLA_OLAYI, odakla);
+    return () => window.removeEventListener(SORU_ODAKLA_OLAYI, odakla);
+  }, []);
 
   useEffect(() => {
     listeRef.current?.scrollTo({ top: listeRef.current.scrollHeight, behavior: 'smooth' });
@@ -151,8 +160,12 @@ export function AssistantPage() {
 
         <Box ref={listeRef} sx={{ flex: 1, overflowY: 'auto', px: { xs: 2, sm: 4 }, py: 3 }} role="log" aria-live="polite" aria-label="Sohbet">
           {bos ? (
-            <Box sx={{ maxWidth: 560, mx: 'auto', textAlign: 'center', pt: { xs: 4, md: 10 } }}>
-              <Typography variant="h2">Ne öğrenmek istersin?</Typography>
+            <Box sx={{ maxWidth: 560, mx: 'auto', textAlign: 'center', pt: { xs: 2, md: 6 }, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
+              <KortiMascot state={deger.trim() ? 'listen' : 'idle'} size={180} decorative />
+              <Typography variant="h2" sx={{ mt: 2 }}>
+                Merhaba, ben Korti
+              </Typography>
+              <Typography sx={{ fontWeight: 600, mt: 0.5 }}>Ne öğrenmek istersin?</Typography>
               <Typography color="text.secondary" sx={{ mt: 1 }}>
                 Yönetmelik ve akademik takvim sorularını kaynak göstererek; not, devam ve sınav sorularını kendi OBS, Pusula ve PSG verinle hesaplayarak yanıtlarım.
               </Typography>

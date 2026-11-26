@@ -19,7 +19,8 @@ import { Eye, EyeOff } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { endpoints } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
-import { LogoMark } from '@/components/Logo';
+import { BrandLogo } from '@/components/BrandLogo';
+import { KortiMascot } from '@/components/korti/KortiMascot';
 import { useAuthStore } from './authStore';
 
 const sema = z.object({
@@ -61,14 +62,12 @@ export function LoginPage() {
   return (
     <Box sx={{ minHeight: '100dvh', display: 'grid', placeItems: 'center', bgcolor: 'background.default', p: 2 }}>
       <Box sx={{ width: '100%', maxWidth: 420 }}>
-        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', mb: 4, justifyContent: 'center' }}>
-          <LogoMark size={48} />
-          <Box>
-            <Typography sx={{ fontWeight: 700, fontSize: '1.75rem', lineHeight: 1.1 }}>Korteks</Typography>
-            <Typography variant="body2" color="text.secondary">
-              PSG, Pusula ve OBS tek yerde
-            </Typography>
-          </Box>
+        <Stack spacing={1} sx={{ alignItems: 'center', mb: 4 }}>
+          <KortiMascot state="found" size={128} decorative />
+          <BrandLogo size={56} />
+          <Typography variant="body2" color="text.secondary">
+            PSG, Pusula ve OBS tek yerde
+          </Typography>
         </Stack>
 
         <Paper variant="outlined" sx={{ p: { xs: 3, sm: 4 }, borderRadius: 3 }}>

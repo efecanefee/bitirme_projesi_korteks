@@ -1,0 +1,51 @@
+/* Korti maskot animasyonları */
+.korti{display:inline-block;line-height:0;flex-shrink:0}
+.korti .k-svg{width:100%;height:auto;overflow:visible}
+.korti g{transform-box:fill-box;transform-origin:center}
+.korti .k-wrap{transform-origin:50% 100%}
+.korti .k-face,.korti .k-x,.korti .k-chin{opacity:0;transition:opacity .22s ease}
+.korti.s-idle .f-idle,.korti.s-listen .f-listen,.korti.s-think .f-think,.korti.s-found .f-found,.korti.s-sad .f-sad,.korti.s-dance .f-dance,.korti.s-listen .x-listen,.korti.s-think .x-think,.korti.s-found .x-found,.korti.s-sad .x-sad,.korti.s-dance .x-dance,.korti.s-think .k-chin{opacity:1}
+.korti .k-hand,.korti .k-foot,.korti .k-chin{transition:transform .5s cubic-bezier(.34,1.56,.64,1),opacity .3s ease}
+.korti.s-idle .k-hand-l{transform:translate(16px,-6px) scale(.2);opacity:0}.korti.s-idle .k-hand-r{transform:translate(-16px,-6px) scale(.2);opacity:0}.korti.s-idle .k-foot{transform:translateY(-16px) scale(.3);opacity:0}
+.korti.s-think .k-hand-r{transform:translate(-16px,-6px) scale(.2);opacity:0}.korti.s-think .k-chin{transform:none}.korti:not(.s-think) .k-chin{transform:translate(18px,-8px) scale(.3)}
+.korti.s-found .k-hand-l{transform:translate(-12px,-46px) rotate(-55deg)}.korti.s-found .k-hand-r{transform:translate(12px,-46px) rotate(55deg)}
+.korti.s-sad .k-hand-l{transform:translate(5px,10px) rotate(-15deg)}.korti.s-sad .k-hand-r{transform:translate(-5px,10px) rotate(15deg)}
+.korti.s-idle .k-bob{animation:k-float 3.2s ease-in-out infinite}.korti.s-idle .k-shadow{animation:k-shadow 3.2s ease-in-out infinite}
+.korti.s-listen .k-bob{animation:k-nod 1.8s ease-in-out infinite}
+.korti.s-think .k-bob{animation:k-sway 2.6s ease-in-out infinite}.korti.s-think .k-look{animation:k-look 2.6s ease-in-out infinite}
+.korti.s-found .k-wrap{animation:k-jump 1.6s cubic-bezier(.3,.7,.4,1) infinite}.korti.s-found .k-shadow{animation:k-jshadow 1.6s cubic-bezier(.3,.7,.4,1) infinite}
+.korti.s-sad .k-wrap{animation:k-shake .5s ease-in-out 1}.korti.s-sad .k-bob{animation:k-sigh 3.4s ease-in-out .5s infinite}
+.korti.s-dance .k-wrap{animation:k-dance 1s ease-in-out infinite}.korti.s-dance .k-hand-l{animation:k-wave-l 1s ease-in-out infinite}.korti.s-dance .k-hand-r{animation:k-wave-r 1s ease-in-out infinite}.korti.s-dance .k-cap{animation:k-cap 1s ease-in-out infinite}.korti.s-dance .k-foot-l{animation:k-step 1s ease-in-out infinite}.korti.s-dance .k-foot-r{animation:k-step 1s ease-in-out .5s infinite}
+.korti .k-blink{animation:k-blink 4.6s infinite}
+.korti .k-dot{animation:k-dot 1.2s ease-in-out infinite}.korti .d2{animation-delay:.15s}.korti .d3{animation-delay:.3s}
+.korti.s-think .k-pop{animation:k-pop .4s cubic-bezier(.34,1.56,.64,1) both}.korti .p2{animation-delay:.1s!important}.korti .p3{animation-delay:.2s!important}
+.korti .k-tw{animation:k-twinkle 1.4s ease-in-out infinite}.korti .t2{animation-delay:.4s}.korti .t3{animation-delay:.8s}.korti .k-bulb{animation:k-glow 1.6s ease-in-out infinite}
+.korti .k-tear{animation:k-tear 2.2s ease-in infinite}.korti .k-q{animation:k-bobq 2.4s ease-in-out infinite}.korti .q2{animation-delay:.6s}
+.korti .k-heart{animation:k-heart 2s ease-out infinite}.korti .h2{animation-delay:.6s}.korti .h3{animation-delay:1.2s}.korti .k-note{animation:k-heart 1.8s ease-out .3s infinite}
+@keyframes k-float{0%,100%{transform:translateY(0)}50%{transform:translateY(-9px)}}
+@keyframes k-shadow{0%,100%{transform:scale(1);opacity:.18}50%{transform:scale(.82);opacity:.1}}
+@keyframes k-nod{0%,100%{transform:translateY(0) rotate(0)}30%{transform:translateY(-3px) rotate(-2deg)}60%{transform:translateY(0) rotate(1.5deg)}}
+@keyframes k-sway{0%,100%{transform:rotate(-3deg)}50%{transform:rotate(3deg)}}
+@keyframes k-look{0%,100%{transform:translate(0,0)}50%{transform:translate(1.5px,-1px)}}
+@keyframes k-jump{0%,70%,100%{transform:translateY(0) scale(1,1)}10%{transform:translateY(0) scale(1.07,.9)}30%{transform:translateY(-20px) scale(.95,1.06)}50%{transform:translateY(0) scale(1.05,.94)}60%{transform:translateY(0) scale(.99,1.01)}}
+@keyframes k-jshadow{0%,70%,100%{transform:scale(1);opacity:.1}30%{transform:scale(.7);opacity:.05}}
+@keyframes k-shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-5px)}40%{transform:translateX(5px)}60%{transform:translateX(-3px)}80%{transform:translateX(2px)}}
+@keyframes k-sigh{0%,100%{transform:translateY(3px) scale(1,1)}50%{transform:translateY(4px) scale(1.02,.97)}}
+@keyframes k-dance{0%,100%{transform:translateX(-6px) rotate(-6deg)}25%{transform:translateX(0) translateY(-7px) rotate(0)}50%{transform:translateX(6px) rotate(6deg)}75%{transform:translateX(0) translateY(-7px) rotate(0)}}
+@keyframes k-wave-l{0%,100%{transform:translate(-12px,-46px) rotate(-55deg)}50%{transform:none}}
+@keyframes k-wave-r{0%,100%{transform:none}50%{transform:translate(12px,-46px) rotate(55deg)}}
+@keyframes k-cap{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(6deg)}}
+@keyframes k-step{0%,100%{transform:translateY(0)}25%{transform:translateY(-4px)}}
+@keyframes k-blink{0%,92%,100%{transform:scaleY(1)}95%{transform:scaleY(.1)}}
+@keyframes k-dot{0%,60%,100%{transform:translateY(0);opacity:.55}30%{transform:translateY(-3px);opacity:1}}
+@keyframes k-pop{from{transform:scale(0)}to{transform:scale(1)}}
+@keyframes k-twinkle{0%,100%{transform:scale(.4) rotate(0);opacity:.3}50%{transform:scale(1.15) rotate(45deg);opacity:1}}
+@keyframes k-glow{0%,100%{transform:scale(1);filter:brightness(1)}50%{transform:scale(1.08);filter:brightness(1.15)}}
+@keyframes k-tear{0%{transform:translateY(0);opacity:0}15%{opacity:1}100%{transform:translateY(16px);opacity:0}}
+@keyframes k-bobq{0%,100%{transform:translateY(0) rotate(-6deg)}50%{transform:translateY(-5px) rotate(6deg)}}
+@keyframes k-heart{0%{transform:translateY(6px) scale(.5);opacity:0}25%{opacity:1}100%{transform:translateY(-22px) scale(1.1);opacity:0}}
+@media (prefers-reduced-motion:reduce){.korti *{animation:none!important;transition:opacity .2s!important}}
+
+/* Küçük boyut: kep, balonlar ve el-ayak düşer; yüz ve ifade kalır */
+.korti.k-mini .k-cap,.korti.k-mini .k-x,.korti.k-mini .k-limbs,.korti.k-mini .k-chin,.korti.k-mini .k-shadow{display:none}
+.korti.k-mini .k-svg{overflow:hidden}

@@ -11,7 +11,7 @@ export default defineConfig(({ mode }) => {
       react(),
       VitePWA({
         registerType: 'autoUpdate',
-        includeAssets: ['favicon.svg', 'icons/apple-touch-icon.png'],
+        includeAssets: ['favicon.ico', 'favicon.svg', 'favicon-16x16.png', 'favicon-32x32.png', 'favicon-48x48.png', 'icons/apple-touch-icon.png'],
         manifest: {
           name: 'Korteks – Öğrenci Platformu',
           short_name: 'Korteks',
@@ -19,12 +19,12 @@ export default defineConfig(({ mode }) => {
           lang: 'tr',
           start_url: '/',
           display: 'standalone',
-          background_color: '#F5F6F8',
-          theme_color: '#1D4F91',
+          background_color: '#C8F3FF',
+          theme_color: '#FF5C23',
           icons: [
             { src: '/icons/icon-192.png', sizes: '192x192', type: 'image/png' },
             { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png' },
-            { src: '/icons/icon-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
+            { src: '/icons/icon-maskable-512.png', sizes: '512x512', type: 'image/png', purpose: 'maskable' },
           ],
         },
         workbox: {

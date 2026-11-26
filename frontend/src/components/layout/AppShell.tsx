@@ -5,6 +5,16 @@ import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
 import { KortiFab } from '@/components/korti/KortiFab';
 import { useAuthStore } from '@/features/auth/authStore';
+import { BildirimIzniPenceresi } from '@/features/notifications/BildirimIzniPenceresi';
+import { useBildirimler } from '@/features/notifications/useBildirimler';
+import { useTarayiciBildirimleri } from '@/features/notifications/tarayiciBildirimi';
+
+/** Öğrenci oturumunda bildirimleri izler ve izinliyse tarayıcı bildirimi gönderir (FG-13). */
+function OgrenciBildirimleri() {
+  const { tumu } = useBildirimler();
+  useTarayiciBildirimleri(tumu);
+  return <BildirimIzniPenceresi />;
+}
 
 export const SIDEBAR_WIDTH = 288;
 
@@ -42,6 +52,7 @@ export function AppShell() {
         </Box>
       </Box>
       {ogrenci && <KortiFab />}
+      {ogrenci && <OgrenciBildirimleri />}
     </Box>
   );
 }

@@ -11,6 +11,7 @@ import { ilkAd, kalanGun, saat, saatTr, selam, sayi, tamGun } from '@/lib/format
 import type { DevamOzeti, PanelOzeti } from '@/api/types';
 import { useKortiStore } from '@/components/korti/kortiStore';
 import { KortiCard } from './KortiCard';
+import { DikkatKarti } from '@/features/notifications/DikkatKarti';
 
 export function SourceLegend() {
   return (
@@ -133,6 +134,10 @@ export function DashboardPage() {
       </Box>
 
       {isError && <ErrorState error={error} onRetry={() => void refetch()} />}
+
+      <Box sx={{ mb: 3, '&:empty': { display: 'none' } }}>
+        <DikkatKarti />
+      </Box>
 
       <Box sx={{ display: 'grid', gridTemplateColumns: { xs: 'minmax(0, 1fr)', lg: 'minmax(0, 1.5fr) minmax(380px, 1fr)' }, gap: 3, alignItems: 'start' }}>
         <Stack spacing={3}>

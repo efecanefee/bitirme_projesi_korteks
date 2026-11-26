@@ -2,7 +2,6 @@ import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { useNavigate } from 'react-router';
 import {
   Avatar,
-  Badge,
   Box,
   Divider,
   IconButton,
@@ -15,9 +14,10 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { Bell, LogOut, Menu as MenuIcon, Moon, Search, ShieldCheck, Sun } from 'lucide-react';
+import { LogOut, Menu as MenuIcon, Moon, Search, ShieldCheck, Sun } from 'lucide-react';
 import { useAuthStore } from '@/features/auth/authStore';
-import { useDuyurular } from '@/api/queries';
+import { BildirimZili } from '@/features/notifications/BildirimZili';
+import { useBildirimStore } from '@/features/notifications/bildirimStore';
 import { basHarfler } from '@/lib/format';
 import { endpoints } from '@/api/endpoints';
 import { useQueryClient } from '@tanstack/react-query';
@@ -113,8 +113,6 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
   const qc = useQueryClient();
   const kullanici = useAuthStore((s) => s.kullanici);
   const logout = useAuthStore((s) => s.logout);
-  const { data: duyurular } = useDuyurular();
-  const okunmamis = duyurular?.filter((d) => !d.okundu).length ?? 0;
   const [anchor, setAnchor] = useState<HTMLElement | null>(null);
 
   const cikis = async () => {
@@ -125,6 +123,7 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
       /* sunucu yanıt vermese de yerel oturum kapatılır */
     }
     logout();
+    useBildirimStore.getState().temizle();
     qc.clear();
     navigate('/giris', { replace: true });
   };
@@ -158,17 +157,7 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
       <Box sx={{ ml: 'auto !important' }}>
         <ThemeToggle />
       </Box>
-      {kullanici.rol === 'ogrenci' && (
-        <IconButton
-          aria-label={okunmamis ? `Duyurular, ${okunmamis} okunmamış` : 'Duyurular'}
-          onClick={() => navigate('/duyurular')}
-          sx={{ border: 1, borderColor: 'divider', width: 44, height: 44 }}
-        >
-          <Badge variant="dot" color="primary" invisible={!okunmamis} overlap="circular">
-            <Bell size={20} strokeWidth={1.75} />
-          </Badge>
-        </IconButton>
-      )}
+      {kullanici.rol === 'ogrenci' && <BildirimZili />}
       <Box
         component="button"
         type="button"

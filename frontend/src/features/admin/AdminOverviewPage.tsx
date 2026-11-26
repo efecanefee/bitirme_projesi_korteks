@@ -6,9 +6,40 @@ import { SectionCard } from '@/components/SectionCard';
 import { CardSkeleton, ErrorState } from '@/components/states';
 import { BarChart, HBarList, StatTile } from './charts';
 import { NIYET_ETIKETI } from '@/lib/labels';
+import { DisaAktarDugmesi } from '@/components/DisaAktarDugmesi';
+import type { Rapor } from '@/lib/disaAktar';
+import type { CevaplanamayanSoru, YoneticiIstatistik } from '@/api/types';
 
 const sn = (ms: number) => `${(ms / 1000).toLocaleString('tr-TR', { maximumFractionDigits: 1 })} sn`;
 const yuzde = (o: number) => `%${Math.round(o * 100)}`;
+
+/** İstatistik raporu: İP-8 değerlendirmesi ve tez ekleri için (FOG-02 yanıt süreleri dahil). */
+function istatistikRaporu(data: YoneticiIstatistik, acik: CevaplanamayanSoru[]): Rapor {
+  return {
+    baslik: 'Asistan kullanım istatistikleri',
+    aciklama: 'Son 14 gün',
+    ozet: [
+      { etiket: 'Toplam soru', deger: data.toplam_soru.toLocaleString('tr-TR') },
+      { etiket: 'Ortalama yanıt süresi (hedef ≤ 5 sn)', deger: sn(data.ortalama_sure_ms) },
+      { etiket: 'p95 yanıt süresi (hedef ≤ 8 sn)', deger: sn(data.p95_sure_ms) },
+      { etiket: 'Olumlu geri bildirim', deger: yuzde(data.olumlu_oran) },
+      { etiket: '“Bulunamadı” yanıtı', deger: yuzde(data.bulunamadi_oran) },
+    ],
+    tablolar: [
+      {
+        baslik: 'Günlük soru sayısı ve ortalama yanıt süresi',
+        sutunlar: ['Tarih', 'Soru', 'Ortalama süre (sn)'],
+        satirlar: data.gunluk.map((g) => [dayjs(g.tarih).format('D MMMM YYYY dddd'), g.soru, Math.round(g.ortalama_sure_ms / 100) / 10]),
+      },
+      { baslik: 'Soru türleri', sutunlar: ['Tür', 'Sayı'], satirlar: data.niyet_dagilimi.map((n) => [NIYET_ETIKETI[n.niyet], n.sayi]) },
+      {
+        baslik: 'Açık cevaplanamayan sorular',
+        sutunlar: ['Soru', 'Tekrar', 'En yüksek benzerlik'],
+        satirlar: [...acik].sort((a, b) => b.tekrar - a.tekrar).map((c) => [c.soru, c.tekrar, c.en_yuksek_benzerlik]),
+      },
+    ],
+  };
+}
 
 export function AdminOverviewPage() {
   const { data, isPending, isError, error, refetch } = useIstatistik();
@@ -17,10 +48,15 @@ export function AdminOverviewPage() {
 
   return (
     <Box sx={{ maxWidth: 1400, mx: 'auto' }}>
-      <Typography variant="h1">Genel bakış</Typography>
-      <Typography color="text.secondary" sx={{ mt: 0.75, mb: 4 }}>
-        Asistanın son 14 gündeki kullanımı, yanıt süreleri ve geri bildirimler
-      </Typography>
+      <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ justifyContent: 'space-between', alignItems: { sm: 'flex-end' }, mb: 4 }}>
+        <Box>
+          <Typography variant="h1">Genel bakış</Typography>
+          <Typography color="text.secondary" sx={{ mt: 0.75 }}>
+            Asistanın son 14 gündeki kullanımı, yanıt süreleri ve geri bildirimler
+          </Typography>
+        </Box>
+        <DisaAktarDugmesi rapor={() => istatistikRaporu(data!, acik)} disabled={!data} />
+      </Stack>
 
       {isError && <ErrorState error={error} onRetry={() => void refetch()} />}
 

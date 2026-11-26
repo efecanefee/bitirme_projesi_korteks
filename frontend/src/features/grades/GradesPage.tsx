@@ -1,6 +1,7 @@
 import { Link as RouterLink } from 'react-router';
 import { useQueries } from '@tanstack/react-query';
-import { Box, Link, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import { Box, Link, Stack, Typography } from '@mui/material';
+import { DataTable } from '@/components/DataTable';
 import { useDersler, useDevam, useNotlar } from '@/api/queries';
 import { endpoints } from '@/api/endpoints';
 import { qk } from '@/api/queries';
@@ -25,6 +26,14 @@ function finalMetni(s: FinalGerekliSonuc | undefined) {
   }
 }
 
+/** Sıralama: gerekmeyenler başta, ulaşılamayanlar sonda; hesap sunucudaki araçtan gelir. */
+function finalSiraDegeri(s: FinalGerekliSonuc | undefined): number | null {
+  if (!s || s.durum === 'veri_yok') return null;
+  if (s.durum === 'zaten_gecti') return -1;
+  if (s.durum === 'ulasilamaz') return 1000;
+  return s.gerekli;
+}
+
 export function GradesPage() {
   const dersler = useDersler();
   const notlar = useNotlar();
@@ -36,6 +45,7 @@ export function GradesPage() {
     })),
   });
 
+  const finalByKod = new Map((dersler.data ?? []).map((k, i) => [k.ders.kod, finaller[i]?.data] as const));
   const yukleniyor = dersler.isPending || notlar.isPending;
   const hata = dersler.error ?? notlar.error;
 
@@ -60,57 +70,71 @@ export function GradesPage() {
           {yukleniyor ? (
             <CardSkeleton rows={5} />
           ) : (
-            <Box sx={{ overflowX: 'auto' }}>
-              <Table aria-label="Ders notları">
-                <TableHead>
-                  <TableRow>
-                    <TableCell sx={{ pl: 3 }}>Ders</TableCell>
-                    <TableCell>Değerlendirmeler</TableCell>
-                    <TableCell align="right">Şu ana kadarki ortalama</TableCell>
-                    <TableCell align="right" sx={{ pr: 3 }}>
-                      Finalden gereken
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {dersler.data?.map((k, i) => {
-                    const n = (notlar.data ?? []).filter((x) => x.ders_kaydi_id === k.id && x.tur !== 'final');
-                    const ort = dersOrtalamasi(k.id);
-                    const f = finaller[i]?.data;
-                    return (
-                      <TableRow key={k.id} hover>
-                        <TableCell sx={{ pl: 3 }}>
-                          <Link component={RouterLink} to={`/derslerim/${encodeURIComponent(k.ders.kod)}`} underline="hover" sx={{ fontWeight: 600 }}>
-                            {k.ders.ad}
-                          </Link>
-                          <Typography variant="body2" color="text.secondary">
-                            {k.ders.kod}
+            <DataTable
+              satirlar={dersler.data ?? []}
+              anahtar={(k) => k.id}
+              etiket="Ders notları"
+              sayfaBoyutlari={[25]}
+              sutunlar={[
+                {
+                  id: 'ders',
+                  baslik: 'Ders',
+                  deger: (k) => k.ders.ad,
+                  hucre: (k) => (
+                    <>
+                      <Link component={RouterLink} to={`/derslerim/${encodeURIComponent(k.ders.kod)}`} underline="hover" sx={{ fontWeight: 600 }}>
+                        {k.ders.ad}
+                      </Link>
+                      <Typography variant="body2" color="text.secondary">
+                        {k.ders.kod}
+                      </Typography>
+                    </>
+                  ),
+                },
+                {
+                  id: 'degerlendirme',
+                  baslik: 'Değerlendirmeler',
+                  hucre: (k) => (
+                    <Stack direction="row" spacing={2} sx={{ flexWrap: 'wrap', rowGap: 0.5 }}>
+                      {(notlar.data ?? [])
+                        .filter((x) => x.ders_kaydi_id === k.id && x.tur !== 'final')
+                        .map((x) => (
+                          <Typography key={x.id} variant="body2" sx={{ whiteSpace: 'nowrap' }}>
+                            <Box component="span" sx={{ color: 'text.secondary' }}>
+                              {x.baslik} (%{Math.round(x.agirlik * 100)}):
+                            </Box>{' '}
+                            <b>{x.puan ?? '–'}</b>
                           </Typography>
-                        </TableCell>
-                        <TableCell>
-                          <Stack direction="row" spacing={2} sx={{ flexWrap: 'wrap', rowGap: 0.5 }}>
-                            {n.map((x) => (
-                              <Typography key={x.id} variant="body2" sx={{ whiteSpace: 'nowrap' }}>
-                                <Box component="span" sx={{ color: 'text.secondary' }}>
-                                  {x.baslik} (%{Math.round(x.agirlik * 100)}):
-                                </Box>{' '}
-                                <b>{x.puan ?? '–'}</b>
-                              </Typography>
-                            ))}
-                          </Stack>
-                        </TableCell>
-                        <TableCell align="right" sx={{ fontVariantNumeric: 'tabular-nums' }}>
-                          {ort === null ? '–' : sayi(ort, 1)}
-                        </TableCell>
-                        <TableCell align="right" sx={{ pr: 3, fontWeight: 700, color: f?.durum === 'ulasilamaz' ? 'error.main' : 'vurguMetin' }}>
-                          {finalMetni(f)}
-                        </TableCell>
-                      </TableRow>
+                        ))}
+                    </Stack>
+                  ),
+                },
+                {
+                  id: 'ortalama',
+                  baslik: 'Şu ana kadarki ortalama',
+                  align: 'right',
+                  deger: (k) => dersOrtalamasi(k.id),
+                  hucre: (k) => {
+                    const ort = dersOrtalamasi(k.id);
+                    return <Box component="span" sx={{ fontVariantNumeric: 'tabular-nums' }}>{ort === null ? '–' : sayi(ort, 1)}</Box>;
+                  },
+                },
+                {
+                  id: 'final',
+                  baslik: 'Finalden gereken',
+                  align: 'right',
+                  deger: (k) => finalSiraDegeri(finalByKod.get(k.ders.kod)),
+                  hucre: (k) => {
+                    const f = finalByKod.get(k.ders.kod);
+                    return (
+                      <Box component="span" sx={{ fontWeight: 700, color: f?.durum === 'ulasilamaz' ? 'error.main' : 'vurguMetin' }}>
+                        {finalMetni(f)}
+                      </Box>
                     );
-                  })}
-                </TableBody>
-              </Table>
-            </Box>
+                  },
+                },
+              ]}
+            />
           )}
         </SectionCard>
 

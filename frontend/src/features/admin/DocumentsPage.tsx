@@ -12,17 +12,13 @@ import {
   Paper,
   Stack,
   Switch,
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableRow,
   TextField,
   Typography,
 } from '@mui/material';
 import { Upload } from 'lucide-react';
 import { useBelgeAktiflik, useBelgeler, useBelgeYukle } from '@/api/queries';
 import { CardSkeleton, ErrorState } from '@/components/states';
+import { DataTable } from '@/components/DataTable';
 import { BELGE_TURU } from '@/lib/labels';
 import { ApiError } from '@/api/client';
 import { uzunTarih } from '@/lib/format';
@@ -145,42 +141,29 @@ export function DocumentsPage() {
             <CardSkeleton rows={5} />
           </Box>
         ) : (
-          <Box sx={{ overflowX: 'auto' }}>
-            <Table aria-label="Belgeler">
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ pl: 3 }}>Belge</TableCell>
-                  <TableCell>Tür</TableCell>
-                  <TableCell align="right">Sürüm</TableCell>
-                  <TableCell align="right">Parça</TableCell>
-                  <TableCell>Yükleme</TableCell>
-                  <TableCell>İndeks</TableCell>
-                  <TableCell sx={{ pr: 3 }}>Aktif</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data?.map((b) => (
-                  <TableRow key={b.id} sx={{ opacity: b.aktif_mi ? 1 : 0.6 }}>
-                    <TableCell sx={{ pl: 3, fontWeight: 600 }}>{b.baslik}</TableCell>
-                    <TableCell>{BELGE_TURU[b.tur]}</TableCell>
-                    <TableCell align="right">v{b.surum}</TableCell>
-                    <TableCell align="right">{b.parca_sayisi}</TableCell>
-                    <TableCell>{uzunTarih(b.yukleme_tarihi)}</TableCell>
-                    <TableCell>
-                      <Chip size="small" label={DURUM[b.indeks_durumu].etiket} color={DURUM[b.indeks_durumu].renk} variant="outlined" />
-                    </TableCell>
-                    <TableCell sx={{ pr: 3 }}>
-                      <Switch
-                        checked={b.aktif_mi}
-                        onChange={(_, v) => aktiflik.mutate({ id: b.id, aktif_mi: v })}
-                        slotProps={{ input: { 'aria-label': `${b.baslik} v${b.surum} aktif` } }}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
+          <DataTable
+            satirlar={data ?? []}
+            anahtar={(b) => b.id}
+            etiket="Belgeler"
+            varsayilanSiralama={{ id: 'yukleme', yon: 'desc' }}
+            satirSx={(b) => ({ opacity: b.aktif_mi ? 1 : 0.6 })}
+            sutunlar={[
+              { id: 'baslik', baslik: 'Belge', hucre: (b) => <Box component="span" sx={{ fontWeight: 600 }}>{b.baslik}</Box>, deger: (b) => b.baslik },
+              { id: 'tur', baslik: 'Tür', hucre: (b) => BELGE_TURU[b.tur], deger: (b) => BELGE_TURU[b.tur] },
+              { id: 'surum', baslik: 'Sürüm', align: 'right', hucre: (b) => `v${b.surum}`, deger: (b) => b.surum },
+              { id: 'parca', baslik: 'Parça', align: 'right', hucre: (b) => b.parca_sayisi, deger: (b) => b.parca_sayisi },
+              { id: 'yukleme', baslik: 'Yükleme', hucre: (b) => uzunTarih(b.yukleme_tarihi), deger: (b) => b.yukleme_tarihi },
+              { id: 'indeks', baslik: 'İndeks', hucre: (b) => <Chip size="small" label={DURUM[b.indeks_durumu].etiket} color={DURUM[b.indeks_durumu].renk} variant="outlined" />, deger: (b) => DURUM[b.indeks_durumu].etiket },
+              {
+                id: 'aktif',
+                baslik: 'Aktif',
+                hucre: (b) => (
+                  <Switch checked={b.aktif_mi} onChange={(_, v) => aktiflik.mutate({ id: b.id, aktif_mi: v })} slotProps={{ input: { 'aria-label': `${b.baslik} v${b.surum} aktif` } }} />
+                ),
+                deger: (b) => (b.aktif_mi ? 0 : 1),
+              },
+            ]}
+          />
         )}
       </Paper>
       <UploadDialog open={dialog} onClose={() => setDialog(false)} />

@@ -1,4 +1,5 @@
-import { Box, Button, Chip, Paper, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
+import { Box, Button, Chip, Paper, Stack, Typography } from '@mui/material';
+import { DataTable } from '@/components/DataTable';
 import { RefreshCw } from 'lucide-react';
 import dayjs from '@/lib/dayjs';
 import { useSenkronBaslat, useSenkronLoglari } from '@/api/queries';
@@ -52,41 +53,34 @@ export function SyncPage() {
         {isPending ? (
           <CardSkeleton rows={5} />
         ) : (
-          <Box sx={{ overflowX: 'auto' }}>
-            <Table aria-label="Senkronizasyon geçmişi">
-              <TableHead>
-                <TableRow>
-                  <TableCell sx={{ pl: 3 }}>Sistem</TableCell>
-                  <TableCell>Başlangıç</TableCell>
-                  <TableCell align="right">Süre</TableCell>
-                  <TableCell>Durum</TableCell>
-                  <TableCell sx={{ pr: 3 }}>Hata</TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {data?.map((l) => (
-                  <TableRow key={l.id}>
-                    <TableCell sx={{ pl: 3 }}>
-                      <SourceTag sistem={l.kaynak_sistem} size="md" />
-                    </TableCell>
-                    <TableCell>{dayjs(l.baslangic).format('D MMMM HH.mm')}</TableCell>
-                    <TableCell align="right">{l.bitis ? `${dayjs(l.bitis).diff(l.baslangic, 'second')} sn` : '–'}</TableCell>
-                    <TableCell>
-                      <Stack direction="row">
-                        <Chip
-                          size="small"
-                          variant="outlined"
-                          label={l.durum === 'basarili' ? 'Başarılı' : l.durum === 'hatali' ? 'Hatalı' : 'Çalışıyor'}
-                          color={l.durum === 'basarili' ? 'success' : l.durum === 'hatali' ? 'error' : 'warning'}
-                        />
-                      </Stack>
-                    </TableCell>
-                    <TableCell sx={{ pr: 3, color: 'text.secondary' }}>{l.hata ?? '–'}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </Box>
+          <DataTable
+            satirlar={data ?? []}
+            anahtar={(l) => l.id}
+            etiket="Senkronizasyon geçmişi"
+            onEk="log_"
+            varsayilanSiralama={{ id: 'baslangic', yon: 'desc' }}
+            sutunlar={[
+              { id: 'sistem', baslik: 'Sistem', hucre: (l) => <SourceTag sistem={l.kaynak_sistem} size="md" />, deger: (l) => l.kaynak_sistem },
+              { id: 'baslangic', baslik: 'Başlangıç', hucre: (l) => dayjs(l.baslangic).format('D MMMM HH.mm'), deger: (l) => l.baslangic },
+              { id: 'sure', baslik: 'Süre', align: 'right', hucre: (l) => (l.bitis ? `${dayjs(l.bitis).diff(l.baslangic, 'second')} sn` : '–'), deger: (l) => (l.bitis ? dayjs(l.bitis).diff(l.baslangic, 'second') : null) },
+              {
+                id: 'durum',
+                baslik: 'Durum',
+                hucre: (l) => (
+                  <Stack direction="row">
+                    <Chip
+                      size="small"
+                      variant="outlined"
+                      label={l.durum === 'basarili' ? 'Başarılı' : l.durum === 'hatali' ? 'Hatalı' : 'Çalışıyor'}
+                      color={l.durum === 'basarili' ? 'success' : l.durum === 'hatali' ? 'error' : 'warning'}
+                    />
+                  </Stack>
+                ),
+                deger: (l) => l.durum,
+              },
+              { id: 'hata', baslik: 'Hata', hucre: (l) => <Box component="span" sx={{ color: 'text.secondary' }}>{l.hata ?? '–'}</Box> },
+            ]}
+          />
         )}
       </Paper>
     </Box>

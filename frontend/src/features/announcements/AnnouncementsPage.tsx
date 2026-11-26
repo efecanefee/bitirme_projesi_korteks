@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useSearchParams } from 'react-router';
 import { Box, Paper, Stack, ToggleButton, ToggleButtonGroup, Typography } from '@mui/material';
 import { useDuyuruOkundu, useDuyurular } from '@/api/queries';
 import { SourceTag } from '@/components/SourceTag';
@@ -11,7 +12,12 @@ type Filtre = 'hepsi' | 'okunmamis' | KaynakSistem;
 export function AnnouncementsPage() {
   const { data, isPending, isError, error, refetch } = useDuyurular();
   const okundu = useDuyuruOkundu();
-  const [filtre, setFiltre] = useState<Filtre>('hepsi');
+  const [params, setParams] = useSearchParams();
+  // Filtre adres satırında tutulur: bağlantı paylaşılınca ve geri dönülünce aynı görünüm açılır
+  const FILTRELER: Filtre[] = ['hepsi', 'okunmamis', 'PUSULA', 'OBS', 'PSG'];
+  const istenen = params.get('filtre') as Filtre | null;
+  const filtre: Filtre = istenen && FILTRELER.includes(istenen) ? istenen : 'hepsi';
+  const setFiltre = (f: Filtre) => setParams(f === 'hepsi' ? {} : { filtre: f }, { replace: true });
   const [acik, setAcik] = useState<number | null>(null);
 
   const liste = (data ?? []).filter((d) =>

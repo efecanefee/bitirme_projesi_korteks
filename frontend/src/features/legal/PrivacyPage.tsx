@@ -1,13 +1,51 @@
+import { useState } from 'react';
 import { Link as RouterLink } from 'react-router';
-import { Alert, Box, Link, Paper, Stack, Switch, Typography } from '@mui/material';
-import { useMutation } from '@tanstack/react-query';
+import { Alert, Box, Button, Link, Paper, Stack, Switch, Typography } from '@mui/material';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Trash2 } from 'lucide-react';
+import { onbellegiTemizle } from '@/app/onbellek';
 import { endpoints } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
 import { useAuthStore } from '@/features/auth/authStore';
 import { uzunTarih } from '@/lib/format';
 import { KVKK_SURUM, KVKK_TASLAK } from './kvkkMetni';
 
-/** Gizlilik tercihleri: onay bilgisi ve sohbet değerlendirme izninin geri alınması. */
+/** Cihazdaki çevrimdışı kopyayı (7 gün) siler; veriler bir sonraki açılışta sunucudan yeniden yüklenir. */
+function CihazVerisi() {
+  const qc = useQueryClient();
+  const [silindi, setSilindi] = useState(false);
+  return (
+    <Paper variant="outlined" sx={{ p: 3, borderRadius: 3 }}>
+      <Typography variant="h2" sx={{ fontSize: '1.125rem' }}>
+        Cihazdaki veriler
+      </Typography>
+      <Typography color="text.secondary" sx={{ mt: 0.5, maxWidth: '60ch' }}>
+        Bağlantın koptuğunda son verilerini gösterebilmek için ders, not, devam, sınav ve duyuru
+        bilgilerin en fazla 7 gün bu cihazda tutulur. Çıkış yaptığında kendiliğinden silinir.
+      </Typography>
+      <Button
+        variant="outlined"
+        startIcon={<Trash2 size={16} />}
+        sx={{ mt: 2 }}
+        onClick={async () => {
+          await onbellegiTemizle();
+          // Bellekteki kopya da atılır; açık sayfalar sunucudan yeniden yükler
+          await qc.resetQueries();
+          setSilindi(true);
+        }}
+      >
+        Cihazdaki verileri sil
+      </Button>
+      {silindi && (
+        <Typography variant="body2" color="success.main" sx={{ mt: 1.5 }} role="status">
+          Bu cihazdaki kopya silindi.
+        </Typography>
+      )}
+    </Paper>
+  );
+}
+
+/** Gizlilik tercihleri: onay bilgisi, sohbet değerlendirme izninin geri alınması ve cihazdaki veriler. */
 export function PrivacyPage() {
   const kullanici = useAuthStore((s) => s.kullanici);
   const setKullanici = useAuthStore((s) => s.setKullanici);
@@ -87,6 +125,8 @@ export function PrivacyPage() {
             </Alert>
           )}
         </Paper>
+
+        <CihazVerisi />
       </Stack>
     </Box>
   );

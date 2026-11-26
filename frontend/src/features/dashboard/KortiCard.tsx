@@ -7,6 +7,7 @@ import { useKortiStore } from '@/components/korti/kortiStore';
 import { kalanGun } from '@/lib/format';
 import type { PanelOzeti } from '@/api/types';
 import { marka } from '@/app/theme';
+import { useCevrimici } from '@/lib/useCevrimici';
 
 const DEVAM_SORUSU = 'Kaç devamsızlık hakkım kaldı?';
 const GENEL_ONERILER = [DEVAM_SORUSU, 'Bu hafta hangi sınavlarım var?', 'Mazeret sınavına kimler girebilir?'];
@@ -31,6 +32,7 @@ export function KortiCard({ yaklasan }: { yaklasan?: PanelOzeti['yaklasan'] }) {
   const setKartKapali = useKortiStore((s) => s.setKartKapali);
   const [deger, setDeger] = useState('');
   const { balon, sorular } = oneriHazirla(yaklasan);
+  const cevrimici = useCevrimici();
 
   const sor = (soru: string) => navigate(`/asistan?soru=${encodeURIComponent(soru)}`);
   const gonder = (e: FormEvent) => {
@@ -56,8 +58,8 @@ export function KortiCard({ yaklasan }: { yaklasan?: PanelOzeti['yaklasan'] }) {
     >
       <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
         <Typography variant="caption" sx={{ display: 'flex', alignItems: 'center', gap: 1, fontWeight: 600, letterSpacing: '0.08em', textTransform: 'uppercase', color: 'menu.metin' }}>
-          <Box component="span" aria-hidden sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: 'success.main' }} />
-          Korti çevrim içi
+          <Box component="span" aria-hidden sx={{ width: 8, height: 8, borderRadius: '50%', bgcolor: cevrimici ? 'success.main' : 'menu.metinIkincil' }} />
+          {cevrimici ? 'Korti çevrim içi' : 'Korti çevrimdışı'}
         </Typography>
         <Tooltip title="Küçült">
           <IconButton

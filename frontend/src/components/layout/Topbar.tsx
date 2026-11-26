@@ -17,6 +17,7 @@ import { LogOut, Menu as MenuIcon, Moon, ShieldCheck, Sun } from 'lucide-react';
 import { useAuthStore } from '@/features/auth/authStore';
 import { GlobalArama } from '@/features/search/GlobalArama';
 import { BildirimZili } from '@/features/notifications/BildirimZili';
+import { onbellegiTemizle } from '@/app/onbellek';
 import { useBildirimStore } from '@/features/notifications/bildirimStore';
 import { basHarfler } from '@/lib/format';
 import { endpoints } from '@/api/endpoints';
@@ -60,6 +61,7 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
     logout();
     useBildirimStore.getState().temizle();
     qc.clear();
+    void onbellegiTemizle();
     navigate('/giris', { replace: true });
   };
 

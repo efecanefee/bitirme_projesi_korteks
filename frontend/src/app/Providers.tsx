@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { CssBaseline, ThemeProvider, useMediaQuery } from '@mui/material';
-import { QueryClientProvider } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { ONBELLEK_OMRU_MS, ONBELLEK_SURUMU, persister, saklanabilir } from './onbellek';
 import { createAppTheme } from './theme';
 import { createQueryClient } from './queryClient';
 import { ColorModeContext, kayitliTercih, tercihiKaydet, type ColorModeValue, type TemaTercihi } from './colorMode';
@@ -40,8 +41,11 @@ export function ColorModeProvider({ children }: { children: ReactNode }) {
 export function Providers({ children }: { children: ReactNode }) {
   const [client] = useState(createQueryClient);
   return (
-    <QueryClientProvider client={client}>
+    <PersistQueryClientProvider
+      client={client}
+      persistOptions={{ persister, maxAge: ONBELLEK_OMRU_MS, buster: ONBELLEK_SURUMU, dehydrateOptions: { shouldDehydrateQuery: saklanabilir } }}
+    >
       <ColorModeProvider>{children}</ColorModeProvider>
-    </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 }

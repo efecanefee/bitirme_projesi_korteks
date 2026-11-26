@@ -6,8 +6,6 @@ import {
   Button,
   Chip,
   IconButton,
-  Menu,
-  MenuItem,
   Paper,
   Stack,
   TextField,
@@ -21,7 +19,8 @@ import { useMesajlar, useSohbetler, useSoruSor } from '@/api/queries';
 import { ApiError } from '@/api/client';
 import { AssistantBubble, TypingBubble, UserBubble } from './MessageItem';
 import { SourcesPanel } from './SourcesPanel';
-import dayjs from '@/lib/dayjs';
+import { SohbetGecmisi } from './SohbetGecmisi';
+import { useCevrimici } from '@/lib/useCevrimici';
 import { KortiMascot } from '@/components/korti/KortiMascot';
 import { SORU_ODAKLA_OLAYI } from '@/components/korti/kortiStore';
 
@@ -35,7 +34,8 @@ export function AssistantPage() {
   const [sohbetId, setSohbetId] = useState<number | null>(null);
   const [deger, setDeger] = useState('');
   const [seciliId, setSeciliId] = useState<number | null>(null);
-  const [gecmisAnchor, setGecmisAnchor] = useState<HTMLElement | null>(null);
+  const [gecmisAcik, setGecmisAcik] = useState(false);
+  const cevrimici = useCevrimici();
   const [dersBaglami, setDersBaglami] = useState<string | null>(params.get('ders'));
   const listeRef = useRef<HTMLDivElement>(null);
   const girdiRef = useRef<HTMLTextAreaElement>(null);
@@ -49,7 +49,7 @@ export function AssistantPage() {
 
   const gonder = (soru: string) => {
     const temiz = soru.trim();
-    if (!temiz || sor.isPending) return;
+    if (!temiz || sor.isPending || !navigator.onLine) return;
     setDeger('');
     sor.mutate(
       { soru: temiz, sohbet_id: sohbetId, ders_kodu: dersBaglami },
@@ -128,7 +128,7 @@ export function AssistantPage() {
           </Typography>
           <Tooltip title="Geçmiş sohbetler">
             <span>
-              <IconButton aria-label="Geçmiş sohbetler" onClick={(e) => setGecmisAnchor(e.currentTarget)} disabled={!sohbetler.data?.length}>
+              <IconButton aria-label="Geçmiş sohbetler" aria-haspopup="dialog" onClick={() => setGecmisAcik(true)} disabled={!sohbetler.data?.length}>
                 <History size={20} />
               </IconButton>
             </span>
@@ -136,27 +136,19 @@ export function AssistantPage() {
           <Button size="small" startIcon={<Plus size={16} />} onClick={yeniSohbet}>
             Yeni sohbet
           </Button>
-          <Menu anchorEl={gecmisAnchor} open={!!gecmisAnchor} onClose={() => setGecmisAnchor(null)}>
-            {sohbetler.data?.map((s) => (
-              <MenuItem
-                key={s.id}
-                selected={s.id === sohbetId}
-                onClick={() => {
-                  setSohbetId(s.id);
-                  setSeciliId(null);
-                  setGecmisAnchor(null);
-                }}
-              >
-                <Box>
-                  <Typography>{s.baslik}</Typography>
-                  <Typography variant="caption" color="text.secondary">
-                    {dayjs(s.son_mesaj).fromNow()}
-                  </Typography>
-                </Box>
-              </MenuItem>
-            ))}
-          </Menu>
         </Stack>
+
+        <SohbetGecmisi
+          acik={gecmisAcik}
+          onKapat={() => setGecmisAcik(false)}
+          sohbetler={sohbetler.data ?? []}
+          seciliId={sohbetId}
+          onSec={(id) => {
+            setSohbetId(id);
+            setSeciliId(null);
+            setGecmisAcik(false);
+          }}
+        />
 
         <Box ref={listeRef} sx={{ flex: 1, overflowY: 'auto', px: { xs: 2, sm: 4 }, py: 3 }} role="log" aria-live="polite" aria-label="Sohbet">
           {bos ? (
@@ -218,10 +210,15 @@ export function AssistantPage() {
           )}
           <Stack direction="row" spacing={1} sx={{ overflowX: 'auto', pb: 1.5 }} aria-label="Önerilen sorular">
             {oneriler.map((o) => (
-              <Chip key={o} label={o} variant="outlined" onClick={() => gonder(o)} disabled={sor.isPending} sx={{ borderRadius: 999, fontSize: '0.9375rem', height: 38, px: 0.5 }} />
+              <Chip key={o} label={o} variant="outlined" onClick={() => gonder(o)} disabled={sor.isPending || !cevrimici} sx={{ borderRadius: 999, fontSize: '0.9375rem', height: 38, px: 0.5 }} />
             ))}
           </Stack>
         </Box>
+        {!cevrimici && (
+          <Alert severity="info" variant="outlined" sx={{ mx: { xs: 2, sm: 3 }, mb: 1 }}>
+            Çevrimdışısın. Korti yanıt verebilmek için sunucuya bağlanmalı; geçmiş sohbetlerini yine de okuyabilirsin.
+          </Alert>
+        )}
         <Box component="form" onSubmit={submit} sx={{ display: 'flex', gap: 1.5, alignItems: 'flex-end', px: { xs: 2, sm: 3 }, py: 2, borderTop: 1, borderColor: 'divider' }}>
           <TextField
             inputRef={girdiRef}
@@ -235,7 +232,7 @@ export function AssistantPage() {
             autoFocus
             slotProps={{ htmlInput: { 'aria-label': 'Sorunu yaz', maxLength: 1000 } }}
           />
-          <Button type="submit" variant="contained" startIcon={<ArrowUp size={18} />} disabled={!deger.trim() || sor.isPending} sx={{ minHeight: 56, px: 3, flexShrink: 0 }}>
+          <Button type="submit" variant="contained" startIcon={<ArrowUp size={18} />} disabled={!deger.trim() || sor.isPending || !cevrimici} sx={{ minHeight: 56, px: 3, flexShrink: 0 }}>
             Gönder
           </Button>
         </Box>

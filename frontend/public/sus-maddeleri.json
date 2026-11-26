@@ -1,0 +1,17 @@
+{
+  "aciklama": "SUS-TR maddeleri. Metinler makaleden birebir kopyalanıp onaylandıktan sonra 'onaylandi' true yapılmalıdır. Sıra orijinal SUS ile aynıdır (tek numaralılar olumlu, çift numaralılar olumsuz ifadeler).",
+  "kaynak": "D. Demirkol ve Ç. Şeneler, \"Sistem Kullanılabilirlik Ölçeğinin Türkçeye çevirisi: SUS-TR,\" Uşak Üniversitesi Sosyal Bilimler Dergisi, cilt 11, sayı 3, s. 237–253, 2018.",
+  "onaylandi": false,
+  "maddeler": [
+    "Madde 1 (SUS-TR makalesinden eklenecek)",
+    "Madde 2 (SUS-TR makalesinden eklenecek)",
+    "Madde 3 (SUS-TR makalesinden eklenecek)",
+    "Madde 4 (SUS-TR makalesinden eklenecek)",
+    "Madde 5 (SUS-TR makalesinden eklenecek)",
+    "Madde 6 (SUS-TR makalesinden eklenecek)",
+    "Madde 7 (SUS-TR makalesinden eklenecek)",
+    "Madde 8 (SUS-TR makalesinden eklenecek)",
+    "Madde 9 (SUS-TR makalesinden eklenecek)",
+    "Madde 10 (SUS-TR makalesinden eklenecek)"
+  ]
+}

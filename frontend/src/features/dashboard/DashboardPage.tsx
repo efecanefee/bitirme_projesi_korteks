@@ -16,7 +16,7 @@ import { DikkatKarti } from '@/features/notifications/DikkatKarti';
 
 export function SourceLegend() {
   return (
-    <Stack direction="row" spacing={2} sx={{ alignItems: 'center', flexWrap: 'wrap', rowGap: 1 }}>
+    <Stack direction="row" spacing={2} sx={{ alignItems: 'center', flexWrap: 'wrap', rowGap: 1 }} data-tur="kaynaklar">
       <SourceTag sistem="OBS" size="md" />
       <SourceTag sistem="PUSULA" size="md" />
       <SourceTag sistem="PSG" size="md" />

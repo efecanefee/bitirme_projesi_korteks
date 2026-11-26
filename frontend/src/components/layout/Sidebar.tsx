@@ -30,35 +30,36 @@ function NavItems({ items, onNavigate }: { items: NavItem[]; onNavigate?: () => 
   return (
     <>
       {items.map(({ to, label, icon: Icon, badge, end }) => (
-        <ListItemButton
-          key={to}
-          component={NavLink}
-          to={to}
-          end={end}
-          onClick={onNavigate}
-          sx={{
-            borderRadius: 2,
-            mb: 0.5,
-            py: 1,
-            color: 'menu.metin',
-            '&:hover': { bgcolor: 'menu.kart' },
-            '&.active': { bgcolor: 'primary.main', color: 'primary.contrastText', '& .MuiListItemText-primary': { fontWeight: 600 } },
-            '&.active:hover': { bgcolor: 'primary.light' },
-            '&:focus-visible': { outline: 2, outlineColor: 'menu.metin', outlineStyle: 'solid', outlineOffset: -2 },
-          }}
-        >
-          <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
-            <Icon size={20} strokeWidth={1.75} aria-hidden />
-          </ListItemIcon>
-          <ListItemText primary={label} slotProps={{ primary: { sx: { fontSize: '1rem' } } }} />
-          {badge ? (
-            <Badge
-              badgeContent={badge}
-              aria-label={`${badge} okunmamış`}
-              sx={{ '& .MuiBadge-badge': { position: 'static', transform: 'none', bgcolor: 'menu.rozet', color: 'menu.metin', fontWeight: 600 } }}
-            />
-          ) : null}
-        </ListItemButton>
+        <Box component="li" key={to} sx={{ listStyle: 'none' }}>
+          <ListItemButton
+            component={NavLink}
+            to={to}
+            end={end}
+            onClick={onNavigate}
+            sx={{
+              borderRadius: 2,
+              mb: 0.5,
+              py: 1,
+              color: 'menu.metin',
+              '&:hover': { bgcolor: 'menu.kart' },
+              '&.active': { bgcolor: 'primary.main', color: 'primary.contrastText', '& .MuiListItemText-primary': { fontWeight: 600 } },
+              '&.active:hover': { bgcolor: 'primary.light' },
+              '&:focus-visible': { outline: 2, outlineColor: 'menu.metin', outlineStyle: 'solid', outlineOffset: -2 },
+            }}
+          >
+            <ListItemIcon sx={{ minWidth: 40, color: 'inherit' }}>
+              <Icon size={20} strokeWidth={1.75} aria-hidden />
+            </ListItemIcon>
+            <ListItemText primary={label} slotProps={{ primary: { sx: { fontSize: '1rem' } } }} />
+            {badge ? (
+              <Badge
+                badgeContent={badge}
+                aria-label={`${badge} okunmamış`}
+                sx={{ '& .MuiBadge-badge': { position: 'static', transform: 'none', bgcolor: 'menu.rozet', color: 'menu.metin', fontWeight: 600 } }}
+              />
+            ) : null}
+          </ListItemButton>
+        </Box>
       ))}
     </>
   );

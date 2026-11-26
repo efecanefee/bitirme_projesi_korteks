@@ -125,10 +125,10 @@ export function CalendarPage() {
       {genis ? (
         <Box sx={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1.6fr) minmax(320px, 1fr)', gap: 3, alignItems: 'start' }}>
           <Paper variant="outlined" sx={{ borderRadius: 3, overflow: 'hidden' }}>
-            <Box role="grid" aria-label={`${ay.format('MMMM YYYY')} takvimi`}>
-              <Box role="row" sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: 1, borderColor: 'divider' }}>
+            <Box role="group" aria-label={`${ay.format('MMMM YYYY')} takvimi`}>
+              <Box aria-hidden sx={{ display: 'grid', gridTemplateColumns: 'repeat(7, 1fr)', borderBottom: 1, borderColor: 'divider' }}>
                 {HAFTA_GUNLERI.map((g) => (
-                  <Typography role="columnheader" key={g} variant="caption" color="text.secondary" sx={{ py: 1.25, textAlign: 'center', fontWeight: 500 }}>
+                  <Typography key={g} variant="caption" color="text.secondary" sx={{ py: 1.25, textAlign: 'center', fontWeight: 500 }}>
                     {g}
                   </Typography>
                 ))}
@@ -142,11 +142,10 @@ export function CalendarPage() {
                   return (
                     <Box
                       key={d.format('YYYY-MM-DD')}
-                      role="gridcell"
                       component="button"
                       type="button"
-                      aria-selected={sec}
-                      aria-label={`${d.format('D MMMM dddd')}${liste.length ? `, ${liste.length} etkinlik` : ''}`}
+                      aria-pressed={sec}
+                      aria-current={bugun ? 'date' : undefined}
                       onClick={() => setSecili(d)}
                       sx={{
                         minHeight: 104,
@@ -176,19 +175,19 @@ export function CalendarPage() {
                           placeItems: 'center',
                           borderRadius: '50%',
                           fontWeight: bugun ? 700 : 500,
-                          color: bugun ? 'primary.contrastText' : buAy ? 'text.primary' : 'text.disabled',
+                          color: bugun ? 'primary.contrastText' : buAy ? 'text.primary' : 'text.secondary',
                           bgcolor: bugun ? 'primary.main' : 'transparent',
                         }}
                       >
                         {d.date()}
-                      </Typography>
+                      </Typography>{' '}
                       {liste.slice(0, 2).map((e) => (
                         <Box
                           key={e.id}
                           component="span"
                           sx={{ fontSize: 12, lineHeight: 1.3, px: 0.75, py: 0.25, borderRadius: 1, bgcolor: (t) => alpha(t.palette.sistem[e.kaynak_sistem], 0.12), color: 'text.primary', borderLeft: 3, borderColor: `sistem.${e.kaynak_sistem}`, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}
                         >
-                          {e.ders_kodu ?? e.baslik}
+                          {e.ders_kodu ?? e.baslik}{' '}
                         </Box>
                       ))}
                       {liste.length > 2 && (
@@ -196,6 +195,11 @@ export function CalendarPage() {
                           +{liste.length - 2} daha
                         </Typography>
                       )}
+                      {/* Düğmenin adı görünen metinle başlar, tam tarih ekran okuyucuya eklenir (WCAG 2.5.3) */}
+                      <span className="sr-only">
+                        {' '}· {d.format('D MMMM dddd')}
+                        {liste.length ? `, ${liste.length} etkinlik` : ''}
+                      </span>
                     </Box>
                   );
                 })}

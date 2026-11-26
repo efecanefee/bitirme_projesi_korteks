@@ -3,6 +3,7 @@ import { Outlet } from 'react-router';
 import { Box, Drawer, useMediaQuery, useTheme } from '@mui/material';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
+import { CevrimdisiSeridi } from './CevrimdisiSeridi';
 import { KortiFab } from '@/components/korti/KortiFab';
 import { useAuthStore } from '@/features/auth/authStore';
 import { BildirimIzniPenceresi } from '@/features/notifications/BildirimIzniPenceresi';
@@ -47,6 +48,7 @@ export function AppShell() {
       )}
       <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
         <Topbar onMenu={() => setAcik(true)} />
+        <CevrimdisiSeridi />
         <Box component="main" id="icerik" tabIndex={-1} sx={{ flex: 1, px: { xs: 2, sm: 3, md: 5 }, py: { xs: 3, md: 4 }, outline: 'none' }}>
           <Outlet />
         </Box>

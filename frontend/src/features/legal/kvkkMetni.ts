@@ -8,7 +8,7 @@
  * Metin değiştiğinde SURUM artırılır; istemci eski sürümü onaylamış öğrenciden yeniden onay ister.
  */
 
-export const KVKK_SURUM = 'taslak-2026-11';
+export const KVKK_SURUM = 'taslak-2026-11-26';
 export const KVKK_TASLAK = true;
 
 export interface Bolum {
@@ -65,6 +65,7 @@ export const KVKK_BOLUMLER: Bolum[] = [
     baslik: '6. Saklama süresi',
     paragraflar: [
       'Eğitim bilgileriniz kaynak sistemlerle eşitlenerek tutulur ve platform kullanımınız sona erdiğinde silinir. Sohbet geçmişiniz [süre üniversite tarafından belirlenecektir] boyunca saklanır; değerlendirmede kullanılan kayıtlar kimliğinizle ilişkilendirilemeyecek biçimde anonimleştirilir.',
+      'Bağlantınız koptuğunda son verilerinizi gösterebilmek için ders, not, devam, sınav ve duyuru bilgileriniz en fazla 7 gün süreyle yalnızca kendi cihazınızda (tarayıcı depolamasında) tutulur. Çıkış yaptığınızda, onayınızı geri aldığınızda veya Gizlilik sayfasındaki "Cihazdaki verileri sil" düğmesine bastığınızda bu kopya silinir. Tema, bildirim eşikleri gibi arayüz tercihleri de cihazınızda tutulur ve kişisel veri içermez.',
     ],
   },
   {

@@ -1,6 +1,6 @@
-import { useState } from 'react';
-import { Alert, Box, Button, Chip, Collapse, Stack, Typography } from '@mui/material';
-import { ThumbsDown, ThumbsUp } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Alert, Box, Button, Chip, Collapse, IconButton, Stack, Tooltip, Typography } from '@mui/material';
+import { Check, Copy, ThumbsDown, ThumbsUp } from 'lucide-react';
 import type { SohbetMesaji, YanitKaynagi } from '@/api/types';
 import { KortiMascot } from '@/components/korti/KortiMascot';
 import { kortiDurumu } from '@/components/korti/kortiStore';
@@ -25,6 +25,42 @@ function kaynakEtiketi(k: YanitKaynagi): string | null {
   }
   if (k.tip === 'kisisel_veri') return `${SISTEM_ETIKETI[k.kaynak_sistem]} · ${k.baslik.split(' · ')[1] ?? k.baslik}, ${saat(k.son_senkron)}`;
   return null;
+}
+
+/** Yanıtı kaynaklarıyla birlikte panoya kopyalar; kopyalanan metinde de yapay zekâ notu bulunur. */
+function kopyaMetni(mesaj: SohbetMesaji, etiketler: string[]) {
+  const satirlar = [mesaj.cevap.replace(/\*\*/g, '')];
+  if (etiketler.length) satirlar.push('', `Kaynak: ${etiketler.join('; ')}`);
+  satirlar.push('', 'Korteks asistanı (yapay zekâ) tarafından üretildi. Resmî bilgi kaynak sistemdedir.');
+  return satirlar.join('\n');
+}
+
+function KopyalaDugmesi({ metin }: { metin: string }) {
+  const [tamam, setTamam] = useState(false);
+  useEffect(() => {
+    if (!tamam) return;
+    const t = window.setTimeout(() => setTamam(false), 2000);
+    return () => window.clearTimeout(t);
+  }, [tamam]);
+  return (
+    <Tooltip title={tamam ? 'Kopyalandı' : 'Yanıtı kopyala'}>
+      <IconButton
+        size="small"
+        aria-label={tamam ? 'Kopyalandı' : 'Yanıtı kopyala'}
+        onClick={async () => {
+          try {
+            await navigator.clipboard.writeText(metin);
+            setTamam(true);
+          } catch {
+            /* pano izni yoksa sessizce geçilir */
+          }
+        }}
+        sx={{ border: 1, borderColor: 'divider', width: 32, height: 32 }}
+      >
+        {tamam ? <Check size={15} aria-hidden /> : <Copy size={15} aria-hidden />}
+      </IconButton>
+    </Tooltip>
+  );
 }
 
 export function AssistantBubble({ mesaj, onSelect, selected }: { mesaj: SohbetMesaji; onSelect: () => void; selected: boolean }) {
@@ -102,6 +138,7 @@ export function AssistantBubble({ mesaj, onSelect, selected }: { mesaj: SohbetMe
           >
             Yararlı değil
           </Button>
+          <KopyalaDugmesi metin={kopyaMetni(mesaj, tekil)} />
           {arac && (
             <Button size="small" variant="outlined" aria-expanded={hesap} onClick={() => setHesap((h) => !h)} sx={{ minHeight: 32, fontWeight: 500, color: 'text.secondary' }}>
               {hesap ? 'Hesabı gizle' : 'Hesabı göster'}
@@ -111,12 +148,20 @@ export function AssistantBubble({ mesaj, onSelect, selected }: { mesaj: SohbetMe
             {(mesaj.sure_ms / 1000).toLocaleString('tr-TR', { maximumFractionDigits: 1 })} sn
           </Typography>
         </Stack>
+        <Typography variant="caption" color="text.secondary" component="p" sx={{ mt: 0.75 }}>
+          Yapay zekâ tarafından üretildi · Resmî bilgi kaynak sistemdedir
+        </Typography>
       </Box>
     </Box>
   );
 }
 
 export function TypingBubble() {
+  const [saniye, setSaniye] = useState(0);
+  useEffect(() => {
+    const t = window.setInterval(() => setSaniye((s) => s + 1), 1000);
+    return () => window.clearInterval(t);
+  }, []);
   return (
     <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }} role="status">
       <Box sx={{ display: { xs: 'none', sm: 'block' }, flexShrink: 0 }}>
@@ -140,6 +185,12 @@ export function TypingBubble() {
         ))}
         <Typography variant="body2" color="text.secondary" sx={{ ml: 1 }}>
           Korti düşünüyor, kaynaklar taranıyor
+          {saniye > 0 && (
+            <Box component="span" sx={{ fontVariantNumeric: 'tabular-nums' }} aria-hidden>
+              {' '}
+              · {saniye} sn
+            </Box>
+          )}
         </Typography>
       </Box>
     </Box>

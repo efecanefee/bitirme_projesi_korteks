@@ -1,3 +1,4 @@
+import { onbellegiTemizle } from '@/app/onbellek';
 import { useState } from 'react';
 import { Navigate, useLocation, useNavigate } from 'react-router';
 import {
@@ -120,6 +121,7 @@ export function ConsentPage() {
               <Button
                 onClick={() => {
                   logout();
+                  void onbellegiTemizle();
                   navigate('/giris', { replace: true });
                 }}
               >

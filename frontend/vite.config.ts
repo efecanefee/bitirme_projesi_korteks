@@ -28,7 +28,9 @@ export default defineConfig(({ mode }) => {
           ],
         },
         workbox: {
-          // Kişisel veri (KVKK) önbelleğe alınmaz; yalnızca uygulama kabuğu önbelleklenir.
+          // Service worker yalnızca uygulama kabuğunu önbellekler; API yanıtları burada tutulmaz.
+          // Çevrimdışı gösterim için sorgu sonuçları ayrıca IndexedDB'de en fazla 7 gün tutulur
+          // ve çıkışta silinir (src/app/onbellek.ts).
           navigateFallbackDenylist: [/^\/api\//],
           globIgnores: ['**/mockServiceWorker.js'],
           // Tarayıcı bildirimine tıklanınca ilgili sayfayı açan işleyici (FG-13)

@@ -16,11 +16,12 @@ import {
   Typography,
 } from '@mui/material';
 import { Eye, EyeOff } from 'lucide-react';
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { endpoints } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
 import { BrandLogo } from '@/components/BrandLogo';
 import { KortiMascot } from '@/components/korti/KortiMascot';
+import { onbellekSahibiniAyarla } from '@/app/onbellek';
 import { useAuthStore } from './authStore';
 
 const sema = z.object({
@@ -35,6 +36,7 @@ export function LoginPage() {
   const navigate = useNavigate();
   const location = useLocation();
   const setSession = useAuthStore((s) => s.setSession);
+  const qc = useQueryClient();
   const girisli = useAuthStore((s) => s.isAuthenticated());
   const [goster, setGoster] = useState(false);
 
@@ -45,7 +47,9 @@ export function LoginPage() {
 
   const giris = useMutation({
     mutationFn: endpoints.auth.login,
-    onSuccess: (t) => {
+    onSuccess: async (t) => {
+      // Önbellek başka bir kullanıcıya aitse bellekten ve cihazdan silinir (KVKK)
+      if (await onbellekSahibiniAyarla(t.kullanici.id)) qc.clear();
       setSession(t.access_token, t.expires_in, t.kullanici);
       const hedef = (location.state as { from?: string } | null)?.from;
       navigate(hedef ?? (t.kullanici.rol === 'yonetici' ? '/yonetim' : '/'), { replace: true });

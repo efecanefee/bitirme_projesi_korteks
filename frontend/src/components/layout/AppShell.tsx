@@ -7,6 +7,8 @@ import { Topbar } from './Topbar';
 import { CevrimdisiSeridi } from './CevrimdisiSeridi';
 import { KortiFab } from '@/components/korti/KortiFab';
 import { useAuthStore } from '@/features/auth/authStore';
+import { TanitimTuru } from '@/features/tour/TanitimTuru';
+import { CalismaPaneli } from '@/features/study/CalismaPaneli';
 import { BildirimIzniPenceresi } from '@/features/notifications/BildirimIzniPenceresi';
 import { useBildirimler } from '@/features/notifications/useBildirimler';
 import { useTarayiciBildirimleri } from '@/features/notifications/tarayiciBildirimi';
@@ -76,6 +78,8 @@ export function AppShell() {
       </Box>
       {ogrenci && <KortiFab />}
       {ogrenci && <OgrenciBildirimleri />}
+      {ogrenci && <TanitimTuru />}
+      {ogrenci && <CalismaPaneli />}
     </Box>
   );
 }

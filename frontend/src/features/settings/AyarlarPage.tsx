@@ -1,5 +1,6 @@
 import { useState, type ReactNode } from 'react';
-import { Link as RouterLink, useSearchParams } from 'react-router';
+import { Link as RouterLink, useNavigate, useSearchParams } from 'react-router';
+import { useTurStore } from '@/features/tour/turStore';
 import {
   Alert,
   Box,
@@ -144,10 +145,24 @@ function Bildirimler() {
 
 function KortiAyarlari() {
   const { kartKapali, setKartKapali } = useKortiStore();
+  const turBaslat = useTurStore((s) => s.baslat);
+  const navigate = useNavigate();
   return (
     <>
       <Satir id="ayar-korti-kart" baslik="Paneldeki Korti kartı" aciklama="Kapalıyken Korti sağ alttaki düğmeden açılır.">
         <Switch checked={!kartKapali} onChange={(_, v) => setKartKapali(!v)} slotProps={{ input: { 'aria-labelledby': 'ayar-korti-kart' } }} />
+      </Satir>
+      <Satir id="ayar-tur" baslik="Tanıtım turu" aciklama="Korti panelin temel bölümlerini 5 adımda yeniden gösterir.">
+        <Button
+          variant="outlined"
+          onClick={() => {
+            setKartKapali(false);
+            navigate('/');
+            window.setTimeout(turBaslat, 400);
+          }}
+        >
+          Turu yeniden başlat
+        </Button>
       </Satir>
     </>
   );

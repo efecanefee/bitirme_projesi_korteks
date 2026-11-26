@@ -44,6 +44,7 @@ export function KortiCard({ yaklasan }: { yaklasan?: PanelOzeti['yaklasan'] }) {
     <Box
       component="section"
       aria-labelledby="korti-kart-baslik"
+      data-tur="korti"
       sx={{
         bgcolor: (t) => (t.palette.mode === 'dark' ? '#12324A' : t.palette.menu.zemin),
         border: 1,

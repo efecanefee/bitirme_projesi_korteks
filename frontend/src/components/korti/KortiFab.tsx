@@ -30,6 +30,7 @@ export function KortiFab() {
       <ButtonBase
         onClick={tikla}
         aria-label={etiket}
+        data-tur="korti"
         sx={{
           position: 'fixed',
           right: { xs: 16, md: 28 },

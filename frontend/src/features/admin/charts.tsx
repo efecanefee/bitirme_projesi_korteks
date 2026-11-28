@@ -29,7 +29,7 @@ export function BarChart({ veri, baslik, yukseklik = 200 }: { veri: Nokta[]; bas
   const tavan = Math.ceil(maks / 50) * 50;
   const cizgiler = [0, 0.5, 1].map((o) => Math.round(tavan * o));
   return (
-    <Box>
+    <Box sx={{ position: 'relative' }}>
       <Box sx={{ position: 'relative', height: yukseklik, display: 'flex', gap: '2px', alignItems: 'flex-end', pl: 5 }} aria-hidden>
         {cizgiler.map((c) => (
           <Box key={c} sx={{ position: 'absolute', left: 40, right: 0, bottom: `${(c / tavan) * 100}%`, borderTop: 1, borderColor: 'divider' }}>

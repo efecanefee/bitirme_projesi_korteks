@@ -15,7 +15,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, GraduationCap, ShieldAlert } from 'lucide-react';
 import { useMutation } from '@tanstack/react-query';
 import { endpoints } from '@/api/endpoints';
 import { ApiError } from '@/api/client';
@@ -57,6 +57,12 @@ export function LoginPage() {
   const demo = (e_posta: string, sifre: string) => {
     setValue('e_posta', e_posta);
     setValue('sifre', sifre);
+  };
+
+  const hizliGecis = (e_posta: string, sifre: string) => {
+    setValue('e_posta', e_posta);
+    setValue('sifre', sifre);
+    giris.mutate({ e_posta, sifre });
   };
 
   return (
@@ -124,14 +130,37 @@ export function LoginPage() {
 
           {MOCK && (
             <Box sx={{ mt: 3, p: 2, borderRadius: 2, bgcolor: 'secili' }}>
-              <Typography variant="body2" sx={{ fontWeight: 600, mb: 0.5 }}>
-                Demo hesapları (sahte veri)
+              <Typography variant="body2" sx={{ fontWeight: 600, mb: 1 }}>
+                Hızlı Geçiş Paneli (Demo)
               </Typography>
+              <Stack direction="row" spacing={1} sx={{ mb: 1.5 }}>
+                <Button
+                  size="small"
+                  variant="outlined"
+                  startIcon={<GraduationCap size={16} />}
+                  onClick={() => hizliGecis('deniz.yilmaz@ogr.beykent.edu.tr', 'korteks123')}
+                  disabled={giris.isPending}
+                  fullWidth
+                >
+                  Öğrenci Geçişi
+                </Button>
+                <Button
+                  size="small"
+                  variant="contained"
+                  color="secondary"
+                  startIcon={<ShieldAlert size={16} />}
+                  onClick={() => hizliGecis('yonetici@beykent.edu.tr', 'yonetici123')}
+                  disabled={giris.isPending}
+                  fullWidth
+                >
+                  Admin Geçişi
+                </Button>
+              </Stack>
               <Stack spacing={0.5}>
-                <Link component="button" type="button" variant="body2" onClick={() => demo('deniz.yilmaz@ogr.beykent.edu.tr', 'korteks123')} sx={{ textAlign: 'left' }}>
+                <Link component="button" type="button" variant="caption" onClick={() => demo('deniz.yilmaz@ogr.beykent.edu.tr', 'korteks123')} sx={{ textAlign: 'left' }}>
                   Öğrenci: deniz.yilmaz@ogr.beykent.edu.tr
                 </Link>
-                <Link component="button" type="button" variant="body2" onClick={() => demo('yonetici@beykent.edu.tr', 'yonetici123')} sx={{ textAlign: 'left' }}>
+                <Link component="button" type="button" variant="caption" onClick={() => demo('yonetici@beykent.edu.tr', 'yonetici123')} sx={{ textAlign: 'left' }}>
                   Yönetici: yonetici@beykent.edu.tr
                 </Link>
               </Stack>

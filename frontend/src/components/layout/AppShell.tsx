@@ -15,7 +15,7 @@ export function AppShell() {
   const ogrenci = useAuthStore((s) => s.kullanici?.rol === 'ogrenci');
 
   return (
-    <Box sx={{ display: 'flex', minHeight: '100dvh', bgcolor: 'background.default' }}>
+    <Box sx={{ display: 'flex', height: '100dvh', overflow: 'hidden', bgcolor: 'background.default' }}>
       <Box
         component="a"
         href="#icerik"
@@ -26,7 +26,7 @@ export function AppShell() {
       {masaustu ? (
         <Box
           component="aside"
-          sx={{ width: SIDEBAR_WIDTH, flexShrink: 0, borderRight: 1, borderColor: 'menu.kenar', bgcolor: 'menu.zemin', position: 'sticky', top: 0, height: '100dvh' }}
+          sx={{ width: SIDEBAR_WIDTH, flexShrink: 0, borderRight: 1, borderColor: 'menu.kenar', bgcolor: 'menu.zemin', height: '100dvh', overflow: 'hidden' }}
         >
           <Sidebar />
         </Box>
@@ -35,7 +35,7 @@ export function AppShell() {
           <Sidebar onNavigate={() => setAcik(false)} />
         </Drawer>
       )}
-      <Box sx={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column' }}>
+      <Box sx={{ flex: 1, minWidth: 0, height: '100dvh', overflowY: 'auto', display: 'flex', flexDirection: 'column', bgcolor: 'background.default' }}>
         <Topbar onMenu={() => setAcik(true)} />
         <Box component="main" id="icerik" tabIndex={-1} sx={{ flex: 1, px: { xs: 2, sm: 3, md: 5 }, py: { xs: 3, md: 4 }, outline: 'none' }}>
           <Outlet />

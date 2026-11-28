@@ -15,7 +15,7 @@ import {
   useMediaQuery,
   useTheme,
 } from '@mui/material';
-import { Bell, LogOut, Menu as MenuIcon, Moon, Search, ShieldCheck, Sun } from 'lucide-react';
+import { ArrowLeftRight, Bell, LogOut, Menu as MenuIcon, Moon, Search, ShieldCheck, Sun } from 'lucide-react';
 import { useAuthStore } from '@/features/auth/authStore';
 import { useDuyurular } from '@/api/queries';
 import { basHarfler } from '@/lib/format';
@@ -112,6 +112,7 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
   const navigate = useNavigate();
   const qc = useQueryClient();
   const kullanici = useAuthStore((s) => s.kullanici);
+  const setSession = useAuthStore((s) => s.setSession);
   const logout = useAuthStore((s) => s.logout);
   const { data: duyurular } = useDuyurular();
   const okunmamis = duyurular?.filter((d) => !d.okundu).length ?? 0;
@@ -127,6 +128,19 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
     logout();
     qc.clear();
     navigate('/giris', { replace: true });
+  };
+
+  const rolDegistir = async () => {
+    const hedefEposta = kullanici?.rol === 'yonetici' ? 'deniz.yilmaz@ogr.beykent.edu.tr' : 'yonetici@beykent.edu.tr';
+    const hedefSifre = kullanici?.rol === 'yonetici' ? 'korteks123' : 'yonetici123';
+    try {
+      const t = await endpoints.auth.login({ e_posta: hedefEposta, sifre: hedefSifre });
+      setSession(t.access_token, t.expires_in, t.kullanici);
+      qc.clear();
+      navigate(t.kullanici.rol === 'yonetici' ? '/yonetim' : '/', { replace: true });
+    } catch {
+      /* demo geçiş hatası */
+    }
   };
 
   if (!kullanici) return null;
@@ -155,7 +169,31 @@ export function Topbar({ onMenu }: { onMenu: () => void }) {
         </IconButton>
       )}
       {kullanici.rol === 'ogrenci' ? <AskBar /> : <Box sx={{ flex: 1 }} />}
-      <Box sx={{ ml: 'auto !important' }}>
+      <Box sx={{ ml: 'auto !important', display: 'flex', alignItems: 'center', gap: 1 }}>
+        {import.meta.env.VITE_USE_MOCKS === 'true' && (
+          <Tooltip title={kullanici.rol === 'yonetici' ? 'Öğrenci paneline hızlı geç' : 'Admin paneline hızlı geç'}>
+            <IconButton
+              onClick={rolDegistir}
+              aria-label={kullanici.rol === 'yonetici' ? 'Öğrenci paneline geç' : 'Admin paneline geç'}
+              sx={{
+                border: 1,
+                borderColor: 'divider',
+                borderRadius: 2,
+                px: 1.25,
+                height: 44,
+                gap: 0.75,
+                fontSize: '0.8125rem',
+                fontWeight: 600,
+                color: 'text.primary',
+              }}
+            >
+              <ArrowLeftRight size={16} />
+              <Box component="span" sx={{ display: { xs: 'none', sm: 'inline' } }}>
+                {kullanici.rol === 'yonetici' ? 'Öğrenci' : 'Admin'}
+              </Box>
+            </IconButton>
+          </Tooltip>
+        )}
         <ThemeToggle />
       </Box>
       {kullanici.rol === 'ogrenci' && (

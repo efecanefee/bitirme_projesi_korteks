@@ -1,4 +1,4 @@
-import { Link as RouterLink } from 'react-router';
+import { Link as RouterLink, useLocation } from 'react-router';
 import { useQueries } from '@tanstack/react-query';
 import { Box, Link, Stack, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material';
 import { useDersler, useDevam, useNotlar } from '@/api/queries';
@@ -26,6 +26,8 @@ function finalMetni(s: FinalGerekliSonuc | undefined) {
 }
 
 export function GradesPage() {
+  const location = useLocation();
+  const devamsizlikGorunumu = location.pathname === '/devamsizlik';
   const dersler = useDersler();
   const notlar = useNotlar();
   const devam = useDevam();
@@ -48,14 +50,25 @@ export function GradesPage() {
 
   return (
     <Box sx={{ maxWidth: 1400, mx: 'auto' }}>
-      <Typography variant="h1">Notlar ve devam</Typography>
+      <Typography variant="h1">{devamsizlikGorunumu ? 'Devamsızlık Durumu' : 'Not Listesi ve Devam'}</Typography>
       <Typography color="text.secondary" sx={{ mt: 0.75, mb: 4 }}>
-        Not ve devam bilgileri OBS'den gelir. "Finalden gereken" sütunu sunucudaki hesaplama aracıyla bulunur.
+        {devamsizlikGorunumu
+          ? 'Teorik derslerin en az %70’ine devam zorunludur. Ders başına kullanılan ve kalan devamsızlık hakları OBS verisiyle güncellenir.'
+          : "Not ve devam bilgileri OBS'den gelir. 'Finalden gereken' sütunu sunucudaki hesaplama aracıyla bulunur."}
       </Typography>
 
       {hata && <ErrorState error={hata} onRetry={() => void Promise.all([dersler.refetch(), notlar.refetch()])} />}
 
       <Stack spacing={3}>
+        {devamsizlikGorunumu && (
+          <SectionCard title="Devam durumu" flush action={<SourceTag sistem="OBS" sonSenkron={devam.data?.[0]?.son_senkron} />}>
+            {devam.isPending ? <CardSkeleton rows={5} /> : devam.data?.map((d) => <AttendanceRow key={d.ders_kaydi_id} d={d} />)}
+            <Typography variant="caption" color="text.secondary" component="p" sx={{ px: 3, py: 2, borderTop: 1, borderColor: 'divider' }}>
+              Teorik derslerin en az %70'ine devam zorunludur; sınırı aşan öğrenci final ve bütünleme sınavlarına giremez (Yönetmelik, Madde 18).
+            </Typography>
+          </SectionCard>
+        )}
+
         <SectionCard title="Bu dönemin notları" flush action={<SourceTag sistem="OBS" sonSenkron={notlar.data?.[0]?.son_senkron} />}>
           {yukleniyor ? (
             <CardSkeleton rows={5} />
@@ -114,12 +127,14 @@ export function GradesPage() {
           )}
         </SectionCard>
 
-        <SectionCard title="Devam durumu" flush action={<SourceTag sistem="OBS" sonSenkron={devam.data?.[0]?.son_senkron} />}>
-          {devam.isPending ? <CardSkeleton rows={5} /> : devam.data?.map((d) => <AttendanceRow key={d.ders_kaydi_id} d={d} />)}
-          <Typography variant="caption" color="text.secondary" component="p" sx={{ px: 3, py: 2, borderTop: 1, borderColor: 'divider' }}>
-            Teorik derslerin en az %70'ine devam zorunludur; sınırı aşan öğrenci final ve bütünleme sınavlarına giremez (Yönetmelik, Madde 18).
-          </Typography>
-        </SectionCard>
+        {!devamsizlikGorunumu && (
+          <SectionCard title="Devam durumu" flush action={<SourceTag sistem="OBS" sonSenkron={devam.data?.[0]?.son_senkron} />}>
+            {devam.isPending ? <CardSkeleton rows={5} /> : devam.data?.map((d) => <AttendanceRow key={d.ders_kaydi_id} d={d} />)}
+            <Typography variant="caption" color="text.secondary" component="p" sx={{ px: 3, py: 2, borderTop: 1, borderColor: 'divider' }}>
+              Teorik derslerin en az %70'ine devam zorunludur; sınırı aşan öğrenci final ve bütünleme sınavlarına giremez (Yönetmelik, Madde 18).
+            </Typography>
+          </SectionCard>
+        )}
       </Stack>
     </Box>
   );
